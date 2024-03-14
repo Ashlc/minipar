@@ -344,7 +344,7 @@ class Lexer:
                 self.new_line()
                 self.content = self.txtline
                 lexem = ''
-                self.state = 0        
+                self.state = 0
 
     def back(self):
         self.pos -= 1
