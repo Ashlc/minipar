@@ -33,6 +33,7 @@ class TokenEnums(Enum):
     DL_DOT = 25       # .
     DL_LBRACKET = 26  # [
     DL_RBRACKET = 27  # ]
+    DL_COMMENT = 28   # #
     
     # Identifiers and Literals
     ID = 28
