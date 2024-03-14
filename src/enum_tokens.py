@@ -10,6 +10,10 @@ class TokenEnums(Enum):
     RW_FALSE = 6
     RW_NULL = 7
 
+    # Reserved Words - Channel
+    RW_SEND = 32
+    RW_RECEIVE = 33
+
     # Reserved Words - Control Flow
     RW_SEQ = 8
     RW_PAR = 9
@@ -39,6 +43,9 @@ class TokenEnums(Enum):
     ID = 28
     NUM = 29  
     STRING_LITERAL = 30
+
+    # Errors
+    ER_CHANNEL = 34
     
     # End of File
     EOF = 31

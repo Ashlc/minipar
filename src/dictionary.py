@@ -16,6 +16,8 @@ class WordDict:
     "c_channel": en.RW_C_CHANNEL,
     "true": en.RW_TRUE,
     "false": en.RW_FALSE,
-    "null": en.RW_NULL  
+    "null": en.RW_NULL,  
+    "send": en.RW_SEND,
+    "receive": en.RW_RECEIVE
     }
     

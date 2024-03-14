@@ -100,6 +100,20 @@ class Lexer:
                     else:
                         lexem += currChar
                         self.state = 1
+                # FOR CONNECTION (c_channel -> variável)
+                # n entendi como faz. mas ele tem q ter duas funções base (send e recieve)
+                elif currChar == 'c':
+                    # Check for 'channel' keyword
+                    if self.peek(6) == '_channel':
+                        lexem += currChar
+                        for _ in range(6):
+                            lexem += self.next_char()
+                        self.col += 7
+                        self.state = 14
+                        #return Token(TokenEnums.RW_CHAN, lexem, self.row, self.col)
+                    else:
+                        lexem += currChar
+                        self.state = 1
 
                 elif self.is_lower(currChar):
                     lexem += currChar
@@ -345,6 +359,42 @@ class Lexer:
                 self.content = self.txtline
                 lexem = ''
                 self.state = 0
+            
+            elif self.state == 14:
+                currChar = self.next_char()
+                self.col += 1
+                if currChar == ".":
+                    lexem += currChar
+                    currChar = self.next_char()
+                    self.col += 1
+                    # Até onde eu entendi o send e recieve são commandos que precisam existir
+                    if currChar == 's':
+                        # Check for 'send' keyword
+                        if self.peek(4) == 'end':
+                            lexem += currChar
+                            for _ in range(3):
+                                lexem += self.next_char()
+                            self.col += 4
+                            return Token(TokenEnums.RW_SEND, lexem, self.row, self.col)
+                        else:
+                            #Se tiver errado tem que retornar um errinho
+                            self.state = 1
+                            return Token(TokenEnums.ER_CHANNEL, lexem, self.row, self.col)
+                    elif currChar == 'r':
+                        # Check for 'receive' keyword
+                        if self.peek(7) == 'eceive':
+                            lexem += currChar
+                            for _ in range(6):
+                                lexem += self.next_char()
+                            self.col += 7
+                            return Token(TokenEnums.RW_RECEIVE, lexem, self.row, self.col)
+                        else:
+                            self.state = 1
+                            return Token(TokenEnums.ER_CHANNEL, lexem, self.row, self.col)
+
+                else:
+                    return Token(TokenEnums.RW_C_CHANNEL, lexem, self.row, self.col)
+
 
     def back(self):
         self.pos -= 1
