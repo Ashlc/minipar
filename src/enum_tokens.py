@@ -27,11 +27,17 @@ class TokenEnums(Enum):
     DL_LPAREN = 19    # (
     DL_RPAREN = 20    # )
     DL_SEMICOLON = 21 # ;
+    DL_LBRACE = 22    # {
+    DL_RPAREN = 23    # }
+    DL_COMMA = 24     # ,
+    DL_DOT = 25       # .
+    DL_LBRACKET = 26  # [
+    DL_RBRACKET = 27  # ]
     
     # Identifiers and Literals
-    ID = 22
-    NUM = 23  
-    STRING_LITERAL = 24
+    ID = 28
+    NUM = 29  
+    STRING_LITERAL = 30
     
     # End of File
-    EOF = 25
+    EOF = 31
