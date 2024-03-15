@@ -57,10 +57,6 @@ class TokenEnums(Enum):
     OP_GT = 41
     OP_GE = 42
     
-    # Boolean Literals
-    RW_TRUE = 43
-    RW_FALSE = 44
-    
     # Increment and Decrement
     OP_INC = 45
     OP_DEC = 46

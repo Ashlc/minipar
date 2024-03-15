@@ -19,9 +19,7 @@ class WordDict:
     "false": en.RW_FALSE,
     "null": en.RW_NULL,
     "print": en.RW_PRINT,
-    "input": en.RW_INPUT, 
-    "true": en.RW_TRUE,
-    "false": en.RW_FALSE,
+    "input": en.RW_INPUT,
     }
     
     symbols = {
