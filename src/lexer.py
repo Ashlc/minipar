@@ -3,349 +3,82 @@ from dictionary import WordDict
 from enum_tokens import TokenEnums
 from tk import *
 
-# Codigo do monitor
-
 class Lexer:
+    def __init__(self, text):
+        self.text = text
+        self.pos = 0
+        self.current_char = self.text[self.pos] if self.pos < len(self.text) else None
 
-    def __init__(self, file):
-        try:
-            self.txtline = " "
-            self.pos = 1
-            self.row = 1
-            self.col = 1
-            self.reader = open(file, 'rb')
-            self.new_line()
-
-            self.content = list(self.txtline)
-            self.state = None
-
-        except IOError as e:
-            traceback.print_exc()
-
-    @staticmethod
-    def is_digit(string):
-        return string.isdigit()
-
-    @staticmethod
-    def is_operator(string):
-
-        return string in ['>', '<', '=', '!']
-
-    @staticmethod
-    def is_lower(string):
-        return string.islower()
-
-    @staticmethod
-    def is_upper(string):
-        return string.isupper()
-
-    @staticmethod
-    def is_blank(string):
-        return string.isspace()
-
-    @staticmethod
-    def is_letter(string):
-        return string.isalpha()
-
-    @staticmethod
-    def is_alphanum(string):
-        return string.isalpha() or string.isdigit()
-
-    def is_EOF(self):
-        return self.pos == len(self.content)
-
-    def next_char(self):
+    def advance(self):
         self.pos += 1
-        return self.content[self.pos - 1]
-
-    def next_token(self):
-        self.state = 0
-        lexem = ""
-
-        while True:
-            if self.is_EOF():
-                if self.new_line():
-                    self.content = list(self.txtline)
-                else:
-                    return Token(TokenEnums.EOF, "EOF", self.row, self.col)
-
-            currChar = self.next_char()
-
-            if self.state == 0:
-
-                if self.is_blank(currChar):
-                    self.state = 0
-
-                elif self.is_lower(currChar):
-                    lexem += currChar
-                    self.state = 1
-
-                elif self.is_digit(currChar):
-                    lexem += currChar
-                    self.state = 3
-
-                elif self.is_operator(currChar):
-                    lexem += currChar
-                    self.state = 7
-
-                elif currChar == '\'':
-                    lexem += currChar
-                    self.state = 8
-
-                elif self.is_upper(currChar):
-                    lexem += currChar
-                    self.state = 11
-
-                elif currChar == '#':
-                    self.state = 13
-
-                elif currChar == '+':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.OP_SUM, lexem, self.row, self.col)
-
-                elif currChar == '-':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.OP_SUB, lexem, self.row, self.col)
-
-                elif currChar == '*':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.OP_MUL, lexem, self.row, self.col)
-
-                elif currChar == '/':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.OP_DIV, lexem, self.row, self.col)
-
-                elif currChar == '%':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.OP_MOD, lexem, self.row, self.col)
-
-                elif currChar == '(':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.DEL_OPENP, lexem, self.row, self.col)
-
-                elif currChar == ')':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.DEL_CLOSEP, lexem, self.row, self.col)
-
-                elif currChar == '[':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.DEL_OPENBRA, lexem, self.row, self.col)
-
-                elif currChar == ']':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.DEL_ENDBRA, lexem, self.row, self.col)
-
-                elif currChar == ';':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.DEL_SEMI, lexem, self.row, self.col)
-
-                elif currChar == ',':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.DEL_COMMA, lexem, self.row, self.col)
-
-                elif currChar == '~':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.OP_NOTUN, lexem, self.row, self.col)
-
-                elif currChar == '&':
-                    lexem += currChar
-                    self.col += 1
-                    return Token(TokenEnums.OP_CONCAT, lexem, self.row, self.col)
-
-                else:
-                    return Token(TokenEnums.ER_UNK, lexem, self.row, self.col)
-
-            elif self.state == 1:
-                if self.is_operator(currChar) or self.is_blank(currChar) or not self.is_alphanum(currChar):
-                    self.back()
-                    self.state = 2
-
-                elif self.is_digit(currChar) or self.is_lower(currChar) or self.is_upper(currChar):
-                    lexem += currChar
-
-                else:
-                    self.col += 1
-                    return Token(TokenEnums.ER_ID, lexem, self.row, self.col)
-
-            elif self.state == 2:
-                self.back()
-                self.col += 1
-                return Token(TokenEnums.ID, lexem, self.row, self.col)
-
-            elif self.state == 3:
-                if currChar == '.':
-                    lexem += currChar
-                    self.state = 4
-                    self.col = +1
-                elif not self.is_alphanum(currChar):
-                    self.back()
-                    self.state = 5
-                elif self.is_digit(currChar):
-                    lexem += currChar
-                else:
-                    self.col += 1
-                    return Token(TokenEnums.ER_NUM, lexem, self.row, self.col)
-
-            elif self.state == 4:
-                if self.is_digit(currChar):
-                    lexem += currChar
-
-                elif self.is_operator(currChar) or self.is_blank(currChar) or not self.is_alphanum(currChar):
-                    self.back()
-                    self.state = 6
-
-                else:
-                    self.col += 1
-                    return Token(TokenEnums.ER_NUM, lexem, self.row, self.col)
-
-            elif self.state == 5:
-                self.back()
-                self.col += 1
-                return Token(TokenEnums.CTE_INT, lexem, self.row, self.col)
-
-            elif self.state == 6:
-                self.back()
-                self.col += 1
-                return Token(TokenEnums.CTE_FLOAT, lexem, self.row, self.col)
-
-            elif self.state == 7:
-                self.back()
-                self.back()
-                currChar = self.next_char()
-
-                if currChar == '>':
-                    currChar = self.next_char()
-                    self.col += 1
-
-                    if currChar == '=':
-                        lexem += currChar
-                        return Token(TokenEnums.OP_EQUALG, lexem, self.row, self.col)
-                    else:
-                        self.back()
-                        return Token(TokenEnums.OP_GREATER, lexem, self.row, self.col)
-
-                elif currChar == '<':
-
-                    currChar = self.next_char()
-                    self.col += 1
-
-                    if currChar == '=':
-                        lexem += currChar
-                        return Token(TokenEnums.OP_EQUALL, lexem, self.row, self.col)
-                    else:
-                        self.back()
-                        return Token(TokenEnums.OP_LESS, lexem, self.row, self.col)
-
-                elif currChar == '!' or currChar == '=':
-                    currChar = self.next_char()
-                    self.col += 1
-
-                    if currChar == '=':
-                        lexem += currChar
-                        return Token(TokenEnums.OP_EQUALDIFF, lexem, self.row, self.col)
-                    elif not (currChar == '!' or currChar == '='):
-                        return Token(TokenEnums.OP_ATR, lexem, self.row, self.col)
-                    else:
-                        self.back()
-                        return Token(TokenEnums.OP_NOT, lexem, self.row, self.col)
-
-                else:
-                    return Token(TokenEnums.ER_UNK, lexem, self.row, self.col)
-
-            elif self.state == 8:
-                if chr(32) <= currChar <= chr(126):
-                    lexem += currChar
-                    currChar = self.next_char()
-
-                    if currChar == '\'':
-                        lexem += currChar
-                        self.state = 9
-
-                    else:
-                        self.back()
-                        self.state = 10
-
-                else:
-                    self.col += 1
-                    return Token(TokenEnums.ER_CHAR, lexem, self.row, self.col)
-
-            elif self.state == 9:
-                self.back()
-                self.col += 1
-                return Token(TokenEnums.CTE_CHAR, lexem, self.row, self.col)
-
-            elif self.state == 10:
-                if chr(32) <= currChar <= chr(126):
-                    lexem += currChar
-
-                    if currChar == '\'':
-                        self.col += 1
-                        return Token(TokenEnums.CTE_STR, lexem, self.row, self.col)
-
-                else:
-                    self.col += 1
-                    return Token(TokenEnums.ER_CHAR, lexem, self.row, self.col)
-
-            elif self.state == 11:
-                if not (self.is_lower(currChar)) or self.is_blank(currChar):
-                    self.back()
-                    self.state = 12
-
-                elif self.is_lower(currChar):
-                    lexem += currChar
-
-            elif self.state == 12:
-                self.back()
-                self.col += 1
-
-                if WordDict.words[lexem] is not None:
-                    return Token(WordDict.words[lexem], lexem, self.row, self.col)
-                else:
-                    return Token(TokenEnums.ER_PR, lexem, self.row, self.col)
-
-            elif self.state == 13:
-                self.new_line()
-                self.content = self.txtline
-                lexem = ''
-                self.state = 0
-
-    def back(self):
-        self.pos -= 1
-
-    def new_line(self):
-
-        tmp = ''
-
-        try:
-            tmp = self.reader.readline().decode("utf-8")
-
-        except IOError as e:
-            traceback.print_exc()
-
-        if tmp != '':
-            self.txtline = tmp
-
-            if tmp[0] != '#':
-                print(f"{self.row} {self.txtline}")
-
-            self.txtline += " "
-            self.row += 1
-            self.pos = 0
-            self.col = 0
-
-            return True
-
-        return False
-    
+        self.current_char = self.text[self.pos] if self.pos < len(self.text) else None
+
+    def skip_whitespace(self):
+        while self.current_char is not None and self.current_char.isspace():
+            self.advance()
+
+    def parse_id_or_keyword(self):
+        result = ''
+        while self.current_char is not None and (self.current_char.isalnum() or self.current_char == '_'):
+            result += self.current_char
+            self.advance()
+
+        # Check if the word is a keyword/protected word
+        if result.lower() in WordDict.words:
+            return WordDict.words[result.lower()], result
+        else:
+            return TokenEnums.ID, result
+
+    def get_next_token(self):
+        while self.current_char is not None:
+            if self.current_char.isspace():
+                self.skip_whitespace()
+                continue
+
+            if self.current_char.isalpha() or self.current_char == '_':
+                return self.parse_id_or_keyword()
+
+            if self.current_char.isdigit():
+                num_str = ''
+                while self.current_char is not None and self.current_char.isdigit():
+                    num_str += self.current_char
+                    self.advance()
+                return TokenEnums.NUM, int(num_str)
+
+            # Handle single character tokens
+            char = self.current_char
+            self.advance()
+            if char in WordDict.symbols:
+                return WordDict.symbols[char], char
+            elif char == '#':
+                # Comment handling - ignore characters until end of line
+                while self.current_char is not None and self.current_char != '\n':
+                    self.advance()
+                continue
+
+            # Handle string literals
+            if char == '"':
+                string_value = ''
+                self.advance()
+                while self.current_char is not None and self.current_char != '"':
+                    string_value += self.current_char
+                    self.advance()
+                self.advance()  # Skip closing double quote
+                return TokenEnums.STRING_LITERAL, string_value
+
+        return TokenEnums.EOF, None
+
+# Test the lexer
+lexer = Lexer("""
+int a = 10;
+if (a > 5) {
+  print("Hello");
+} else {
+  print("World");
+}
+""")
+while True:
+    token_type, value = lexer.get_next_token()
+    if token_type == TokenEnums.EOF:
+        break
+    print(f"Token Type: {token_type.name}, Value: {value}")
