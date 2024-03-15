@@ -48,34 +48,8 @@ class Lexer:
             # Handle single character tokens
             char = self.current_char
             self.advance()
-            if char == '=':
-                return TokenEnums.OP_ASSIGN, char
-            elif char == '+':
-                return TokenEnums.OP_PLUS, char
-            elif char == '-':
-                return TokenEnums.OP_MINUS, char
-            elif char == '*':
-                return TokenEnums.OP_MULTIPLY, char
-            elif char == '/':
-                return TokenEnums.OP_DIVIDE, char
-            elif char == '(':
-                return TokenEnums.DL_LPAREN, char
-            elif char == ')':
-                return TokenEnums.DL_RPAREN, char
-            elif char == ';':
-                return TokenEnums.DL_SEMICOLON, char
-            elif char == '{':
-                return TokenEnums.DL_LBRACE, char
-            elif char == '}':
-                return TokenEnums.DL_RBRACE, char
-            elif char == ',':
-                return TokenEnums.DL_COMMA, char
-            elif char == '.':
-                return TokenEnums.DL_DOT, char
-            elif char == '[':
-                return TokenEnums.DL_LBRACKET, char
-            elif char == ']':
-                return TokenEnums.DL_RBRACKET, char
+            if char in WordDict.symbols:
+                return WordDict.symbols[char], char
             elif char == '#':
                 # Comment handling - ignore characters until end of line
                 while self.current_char is not None and self.current_char != '\n':
