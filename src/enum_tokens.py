@@ -62,6 +62,10 @@ class TokenEnums(Enum):
     OP_DEC = 46
     OP_PLUS_ASSIGN = 47
     OP_MINUS_ASSIGN = 48
+    
+    # Block
+    
+    BLOCK = 49
 
     
     

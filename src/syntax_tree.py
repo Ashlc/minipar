@@ -23,12 +23,12 @@ class SyntaxNode:
         print(f'{indent}{self.node_type} {braces_open}')
 
         if self.value and not isinstance(self.value, str) and parent:
-            print(f'{indent}  {self.node_type} {self.value.lexeme}')
+            print(f'{indent}  {self.value.lexeme}')
         else:
-            print(f'{indent}  {self.node_type}')
+            print(f'{indent}  {self.value}')
 
         for child in self.children:
             if child:
-                child.print_tree(level + 1, self.node_type)
+                child.print_tree(level + 1, self)
 
         print(f'{indent}{braces_close}')
