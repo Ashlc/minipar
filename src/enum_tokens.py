@@ -41,3 +41,20 @@ class TokenEnums(Enum):
     
     # End of File
     EOF = 31
+    
+    # Python Built-in Functions
+    RW_PRINT = 32
+    RW_INPUT = 33
+    
+    # Boolean Operators
+    OP_AND = 34
+    OP_OR = 35
+    OP_NOT = 36
+    OP_EQ = 37
+    OP_NE = 38
+    
+    # Boolean Literals
+    RW_TRUE = 39
+    RW_FALSE = 40
+    
+    

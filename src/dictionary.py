@@ -17,7 +17,11 @@ class WordDict:
     "c_channel": en.RW_C_CHANNEL,
     "true": en.RW_TRUE,
     "false": en.RW_FALSE,
-    "null": en.RW_NULL  
+    "null": en.RW_NULL,
+    "print": en.RW_PRINT,
+    "input": en.RW_INPUT, 
+    "true": en.RW_TRUE,
+    "false": en.RW_FALSE,
     }
     
     symbols = {
@@ -35,5 +39,10 @@ class WordDict:
     ".": en.DL_DOT,
     "[": en.DL_LBRACKET,
     "]": en.DL_RBRACKET,
+    "&&": en.OP_AND,
+    "||": en.OP_OR,
+    "!": en.OP_NOT,
+    "==": en.OP_EQ,
+    "!=": en.OP_NE,
     }
     
