@@ -75,8 +75,15 @@ lexer = Lexer("""
 int a = 10; #Comment
 if (a > 5) {
   print("Hello");
+  par {
+    a += 5;
+    print("World");
+  }
 } else {
-  print("World");
+  seq {
+    print("World");
+    print("!");
+  }
 }
 """)
 while True:

@@ -52,9 +52,21 @@ class TokenEnums(Enum):
     OP_NOT = 36
     OP_EQ = 37
     OP_NE = 38
+    OP_LT = 39
+    OP_LE = 40
+    OP_GT = 41
+    OP_GE = 42
     
     # Boolean Literals
-    RW_TRUE = 39
-    RW_FALSE = 40
+    RW_TRUE = 43
+    RW_FALSE = 44
+    
+    # Increment and Decrement
+    OP_INC = 45
+    OP_DEC = 46
+    OP_PLUS_ASSIGN = 47
+    OP_MINUS_ASSIGN = 48
+
+    
     
     

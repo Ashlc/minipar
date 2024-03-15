@@ -44,5 +44,13 @@ class WordDict:
     "!": en.OP_NOT,
     "==": en.OP_EQ,
     "!=": en.OP_NE,
+    "<": en.OP_LT,
+    "<=": en.OP_LE,
+    ">": en.OP_GT,
+    ">=": en.OP_GE,
+    "++": en.OP_INC,
+    "--": en.OP_DEC,
+    "+=": en.OP_PLUS_ASSIGN,
+    "-=": en.OP_MINUS_ASSIGN,
     }
     
