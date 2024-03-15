@@ -348,3 +348,4 @@ class Lexer:
             return True
 
         return False
+    

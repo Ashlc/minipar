@@ -28,7 +28,7 @@ class TokenEnums(Enum):
     DL_RPAREN = 20    # )
     DL_SEMICOLON = 21 # ;
     DL_LBRACE = 22    # {
-    DL_RPAREN = 23    # }
+    DL_RBRACE = 23    # }
     DL_COMMA = 24     # ,
     DL_DOT = 25       # .
     DL_LBRACKET = 26  # [
