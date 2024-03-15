@@ -10,5 +10,6 @@ The interpreter will be written Python and will be able to interpret and execute
 
 ## 📖 Authors
 
-**Gustavo Domingos de Oliveira**
-**Maria Isadora Bomfim Paz**
+🤓 - **Gustavo Domingos de Oliveira**
+
+💀 - **Maria Isadora Bomfim Paz**
