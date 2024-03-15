@@ -44,18 +44,9 @@ class Lexer:
                     num_str += self.current_char
                     self.advance()
                 return TokenEnums.NUM, int(num_str)
-
-            # Handle single character tokens
+            
             char = self.current_char
-            self.advance()
-            if char in WordDict.symbols:
-                return WordDict.symbols[char], char
-            elif char == '#':
-                # Comment handling - ignore characters until end of line
-                while self.current_char is not None and self.current_char != '\n':
-                    self.advance()
-                continue
-
+            
             # Handle string literals
             if char == '"':
                 string_value = ''
@@ -66,11 +57,22 @@ class Lexer:
                 self.advance()  # Skip closing double quote
                 return TokenEnums.STRING_LITERAL, string_value
 
+            self.advance()
+            
+            # Comment handling - ignore characters until end of line
+            if char in WordDict.symbols:
+                return WordDict.symbols[char], char
+            
+            elif char == '#':
+                while self.current_char is not None and self.current_char != '\n':
+                    self.advance()
+                continue
+
         return TokenEnums.EOF, None
 
 # Test the lexer
 lexer = Lexer("""
-int a = 10;
+int a = 10; #Comment
 if (a > 5) {
   print("Hello");
 } else {
