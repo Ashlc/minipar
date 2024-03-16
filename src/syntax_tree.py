@@ -15,20 +15,19 @@ class SyntaxNode:
     def set_nparams(self, nparams):
         self.nparams = nparams
 
-    def print_tree(self, level=0, parent=None):
-        indent = "  " * level
-        braces_open = "{" if self.children else ""
-        braces_close = "}" if self.children else ""
-
-        print(f'{indent}{self.node_type} {braces_open}')
-
-        if self.value and not isinstance(self.value, str) and parent:
-            print(f'{indent}  {self.value.lexeme}')
+    def __str__(self):
+        if self.value is not None:
+            if isinstance(self.value, list):
+                value_str = '[' + ', '.join(str(item) for item in self.value) + ']'
+            else:
+                value_str = str(self.value)
+            return f"{self.node_type}: {value_str}"
         else:
-            print(f'{indent}  {self.value}')
+            return self.node_type
+
+    def print_tree(self, level=0):
+        indent = "  " * level
+        print(f'{indent}{str(self)}')
 
         for child in self.children:
-            if child:
-                child.print_tree(level + 1, self)
-
-        print(f'{indent}{braces_close}')
+            child.print_tree(level + 1)

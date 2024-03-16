@@ -70,24 +70,14 @@ class Lexer:
 
         return TokenEnums.EOF, None
 
-# Test the lexer
-lexer = Lexer("""
-int a = 10; #Comment
-if (a > 5) {
-  print("Hello");
-  par {
-    a += 5;
-    print("World");
-  }
-} else {
-  seq {
-    print("World");
-    print("!");
-  }
-}
-""")
-while True:
-    token_type, value = lexer.get_next_token()
-    if token_type == TokenEnums.EOF:
-        break
-    print(f"Token Type: {token_type.name}, Value: {value}")
+# # Test the lexer
+# lexer = Lexer("""
+# int a = 10;
+# int b = 20;
+# int c = a + b;
+# """)
+# while True:
+#     token_type, value = lexer.get_next_token()
+#     if token_type == TokenEnums.EOF:
+#         break
+#     print(f"Token Type: {token_type.name}, Value: {value}")

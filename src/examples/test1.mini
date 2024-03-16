@@ -1,0 +1,4 @@
+
+c_channel calculadora computador_1 computador_2
+SEQ
+calculadora.send (operação,valor1, valor2, resultado)
