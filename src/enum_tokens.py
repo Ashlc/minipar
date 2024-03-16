@@ -32,12 +32,11 @@ class TokenEnums(Enum):
     DL_RPAREN = 20    # )
     DL_SEMICOLON = 21 # ;
     DL_LBRACE = 22    # {
-    DL_RPAREN = 23    # }
+    DL_RBRACE = 23    # }
     DL_COMMA = 24     # ,
     DL_DOT = 25       # .
     DL_LBRACKET = 26  # [
     DL_RBRACKET = 27  # ]
-    DL_COMMENT = 28   # #
     
     # Identifiers and Literals
     ID = 28
@@ -49,3 +48,28 @@ class TokenEnums(Enum):
     
     # End of File
     EOF = 31
+    
+    # Python Built-in Functions
+    RW_PRINT = 32
+    RW_INPUT = 33
+    
+    # Boolean Operators
+    OP_AND = 34
+    OP_OR = 35
+    OP_NOT = 36
+    OP_EQ = 37
+    OP_NE = 38
+    OP_LT = 39
+    OP_LE = 40
+    OP_GT = 41
+    OP_GE = 42
+    
+    # Increment and Decrement
+    OP_INC = 45
+    OP_DEC = 46
+    OP_PLUS_ASSIGN = 47
+    OP_MINUS_ASSIGN = 48
+
+    
+    
+    
