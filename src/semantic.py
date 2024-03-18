@@ -54,9 +54,9 @@ class Semantics:
 
     def visit_OP_ASSIGN(self, node):
         print("Visiting OP_ASSIGN")
-        print(node.children)
+        print(node.children, node.children[0].value)
         name = node.children[0].value  # Get the name from the identifier node
-        value_node = node.children[1]  # Get the value node
+        value_node = node.children[0].children[0]  # Get the value node
         value = self.visit(value_node)
 
         if name in self.types[-1] and self.types[-1][name] != self.current_type:
@@ -102,6 +102,7 @@ class Semantics:
         return "RW_INT"
 
     def visit_OP_GT(self, node):
+        node.print_tree()
         left_type = self.visit(node.children[0])
         right_type = self.visit(node.children[1])
         if left_type == right_type:

@@ -216,12 +216,15 @@ class Parser:
 
     def parse_expression(self):
         node = self.parse_term()
-        while self.current_token[0] in (en.OP_PLUS, en.OP_MINUS, en.OP_GT, en.OP_LT, en.OP_GE, en.OP_LE, en.OP_EQ):
+        while self.current_token[0] in (en.OP_PLUS, en.OP_MINUS, en.OP_MULTIPLY, en.OP_DIVIDE, en.OP_GT, en.OP_LT, en.OP_GE, en.OP_LE, en.OP_EQ, en.OP_NE):
             token = self.current_token
             self.eat(token[0])
-            node = SyntaxNode(token[0], node)
-            node.add_children(self.parse_term())
+            operator_node = SyntaxNode(token[0])  # Create a new node for the operator
+            operator_node.add_children(node)  # Add the left-hand side (LHS) of the operation
+            operator_node.add_children(self.parse_term())  # Add the right-hand side (RHS) of the operation
+            node = operator_node
         return node
+
     
     def parse_term(self):
         node = self.parse_factor()
