@@ -69,9 +69,9 @@ class Parser:
         self.eat(en.DL_RBRACE)
         return block_node
 
+
     
     def parse_statement(self):
-        
         token_type = self.current_token[0]
 
         if token_type == en.RW_INT:
@@ -91,7 +91,6 @@ class Parser:
         else:
             
             return self.parse_expression()
-
         
     def parse_if_statement(self):
         self.eat(en.RW_IF)
@@ -117,9 +116,13 @@ class Parser:
         self.eat(en.DL_RPAREN)
         block = self.parse_block()
         
-        print("[parse_while_statement] Returning node with type: (WHILE)")
-        return SyntaxNode(en.RW_WHILE, [condition, block])
+        # Create a SyntaxNode for WHILE loop with condition and block as children
+        while_node = SyntaxNode(en.RW_WHILE)
+        while_node.add_children(condition)
+        while_node.add_children(block)
 
+        print("[parse_while_statement] Returning node with type: (WHILE)")
+        return while_node
     
     def parse_for_statement(self):
         self.eat(en.RW_FOR)
@@ -225,13 +228,12 @@ class Parser:
             node = operator_node
         return node
 
-    
     def parse_term(self):
         node = self.parse_factor()
 
         while self.current_token[0] in (en.OP_MULTIPLY, en.OP_DIVIDE):
             token = self.current_token
-            self.eat([token[0]])
+            self.eat(token[0])
             node = SyntaxNode(token[0], [node, self.parse_factor()])
 
         return node
@@ -289,14 +291,3 @@ class Parser:
 
 # syntax_tree = parser.parse()
 # syntax_tree.print_tree()
-
-
-
-
-
-
-
-
-
-
-

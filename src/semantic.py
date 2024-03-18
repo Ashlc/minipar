@@ -54,18 +54,22 @@ class Semantics:
 
     def visit_OP_ASSIGN(self, node):
         print("Visiting OP_ASSIGN")
-        print(node.children, node.children[0].value)
-        name = node.children[0].value  # Get the name from the identifier node
-        value_node = node.children[0].children[0]  # Get the value node
-        value = self.visit(value_node)
+        node.print_tree()
+        print(node.children)  # Debug print to see children
+        if node.children:
+            name = node.children[0].value  # Get the name from the identifier node
+            value_node = node.children[0].children[0]  # Get the value node
+            value = self.visit(value_node)
 
-        if name in self.types[-1] and self.types[-1][name] != self.current_type:
-            raise Exception(f"Type error: variable '{name}' was declared as {self.types[-1][name]} but assigned a value of type {self.current_type}")
+            if name in self.types[-1] and self.types[-1][name] != self.current_type:
+                raise Exception(f"Type error: variable '{name}' was declared as {self.types[-1][name]} but assigned a value of type {self.current_type}")
 
-        print(f"Assigning {value} to {name}")
-        
-        self.environments[-1][name] = value
-        self.types[-1][name] = self.current_type
+            print(f"Assigning {value} to {name}")
+            
+            self.environments[-1][name] = value
+            self.types[-1][name] = self.current_type
+        else:
+            raise Exception("OP_ASSIGN node has no children")
 
     def visit_ID(self, node):
         node.print_tree()
@@ -93,6 +97,14 @@ class Semantics:
         if not left == "RW_INT" or not right== "RW_INT":
             raise Exception("Type error: both operands must be integers")
         return "RW_INT"
+    
+    def visit_RW_WHILE(self, node):
+        node.print_tree()
+        condition_node = node.children[0]
+        block_node = node.children[1]
+
+        while self.visit(condition_node):
+            self.visit(block_node)
 
     def visit_OP_MINUS(self, node):
         left = self.visit(node.children[0])
@@ -172,17 +184,17 @@ class Semantics:
 
 
 parser = Parser("""
-    int x = 30;
-    int y = 20;
-
-    if (x > y) {
-        print("x is greater than y");
-    } else {
-        print("y is greater than x");
+    int n = 5;
+    int resultado = 1;
+    while (n > 1){
+        resultado = n * resultado;
+        n = n - 1;
     }
+    print(resultado);
 """)
 
 tree = parser.parse()
+tree.print_tree()
 semantics = Semantics()
 semantics.visit(tree)
 print("No semantic errors found")
