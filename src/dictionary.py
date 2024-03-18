@@ -20,6 +20,8 @@ class WordDict:
     "null": en.RW_NULL,
     "print": en.RW_PRINT,
     "input": en.RW_INPUT,
+    "for": en.RW_FOR,
+    "return": en.RW_RETURN,
     }
     
     symbols = {

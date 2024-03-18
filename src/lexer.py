@@ -44,40 +44,65 @@ class Lexer:
                     num_str += self.current_char
                     self.advance()
                 return TokenEnums.NUM, int(num_str)
-            
+
             char = self.current_char
-            
-            # Handle string literals
+
             if char == '"':
                 string_value = ''
                 self.advance()
                 while self.current_char is not None and self.current_char != '"':
                     string_value += self.current_char
                     self.advance()
-                self.advance()  # Skip closing double quote
+                self.advance()
                 return TokenEnums.STRING_LITERAL, string_value
 
-            self.advance()
-            
-            # Comment handling - ignore characters until end of line
-            if char in WordDict.symbols:
+            if char == '{':
+                self.advance()
+                return TokenEnums.DL_LBRACE, char
+            elif char == '}':
+                self.advance()
+                return TokenEnums.DL_RBRACE, char
+            elif char == '(':
+                self.advance()
+                return TokenEnums.DL_LPAREN, char
+            elif char == ')':
+                self.advance()
+                return TokenEnums.DL_RPAREN, char
+            elif char == ',':
+                self.advance()
+                return TokenEnums.COMMA, char
+            elif char in WordDict.symbols:
+                self.advance()
                 return WordDict.symbols[char], char
-            
             elif char == '#':
                 while self.current_char is not None and self.current_char != '\n':
                     self.advance()
                 continue
 
+
         return TokenEnums.EOF, None
 
-# # Test the lexer
-# lexer = Lexer("""
-# int a = 10;
-# int b = 20;
-# int c = a + b;
-# """)
-# while True:
-#     token_type, value = lexer.get_next_token()
-#     if token_type == TokenEnums.EOF:
-#         break
-#     print(f"Token Type: {token_type.name}, Value: {value}")
+# Test the lexer
+lexer = Lexer("""
+int x = 5;
+int y = 6;
+int z = x + y;
+
+print("Hello, World!");
+
+if (x > y) {
+    print("x is greater than y");
+} else {
+    print("y is greater than x");
+}
+
+while (x > 0) {
+    print(x);
+    x = x - 1;
+}
+""")
+while True:
+    token_type, value = lexer.get_next_token()
+    if token_type == TokenEnums.EOF:
+        break
+    print(f"Token Type: {token_type.name}, Value: {value}")

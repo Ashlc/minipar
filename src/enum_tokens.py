@@ -17,6 +17,8 @@ class TokenEnums(Enum):
     RW_ELSE = 11
     RW_WHILE = 12
     RW_CHAN = 13
+    RW_FOR = 44
+    RW_RETURN = 43
     
     # Operators and Delimiters
     OP_ASSIGN = 14  # =
@@ -67,6 +69,7 @@ class TokenEnums(Enum):
     
     BLOCK = 49
     DECLARATION = 50
+    CALL = 51
 
     
     
