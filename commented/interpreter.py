@@ -8,7 +8,7 @@ class Interpreter:
         self.variables = {}
     
     def interpret(self, syntax_tree):
-        
+        # print(f"Interpreting syntax tree: {syntax_tree.node_type}")
         if syntax_tree.node_type == en.PROGRAM:
             for child in syntax_tree.children:
                 self.execute_statement(child)
@@ -16,35 +16,28 @@ class Interpreter:
             raise Exception(f"Expected PROGRAM node at the root, got {syntax_tree.node_type}")
     
     def execute_declaration(self, node):
+        print(f"Executing declaration: {node.node_type}")
         declaration_type = node.node_type
-        print(f"Declaration type: {declaration_type}")  
-        identifier = node.value.value[0][1]
+        identifier = node.value[0][1]
+        print(f"NODE {node}, type {declaration_type}, identifier {identifier}")
         
         if declaration_type == en.RW_INT:
-            value = node.value.value[1].value
+            value = 0  # Initialize integer variables with 0
         elif declaration_type == en.RW_BOOL:
-            value = False  
+            value = False  # Initialize boolean variables with False
         elif declaration_type == en.RW_STRING:
-            value = ""  
+            value = ""  # Initialize string variables with an empty string
         else:
             raise NotImplementedError(f"Declaration type {declaration_type} not implemented in interpreter.")
 
         self.variables[identifier] = value
 
     def evaluate_expression(self, node):
+        print(f"Evaluating expression: {node.node_type}")
         if node.node_type in (en.ID, en.NUM):
-            if node.node_type == en.ID:
-                identifier = node.value
-                if identifier in self.variables:
-                    print(f"Variable '{identifier}' has value {self.variables[identifier]}")
-                    return self.variables[identifier]
-                else:
-                    raise Exception(f"Variable '{identifier}' not defined.")
-            else:  # Handle numeric literals
-                return node.value
-        elif node.node_type == en.STRING_LITERAL:
             return node.value
         elif node.node_type in (en.OP_PLUS, en.OP_MINUS, en.OP_MULTIPLY, en.OP_DIVIDE):
+            
             left_value = self.evaluate_expression(node.value[0])
             right_value = self.evaluate_expression(node.value[1])
             if node.node_type == en.OP_PLUS:
@@ -73,34 +66,41 @@ class Interpreter:
 
     def execute_statement(self, node):
         print(f"Executing statement: {node.node_type}")
-        if node.node_type == en.RW_PRINT: 
+
+        if node.node_type == en.OP_ASSIGN:
+            # Handle assignment operation
+            identifier = node.value[0].value
+            
+            value = self.evaluate_expression(node.value[1])
+            print(f"Assignment: {identifier} = {value}")  # Placeholder for variable storage
+        elif node.node_type == en.RW_PRINT:
+            # Handle print statement
+            print("Printing:")
             value = self.evaluate_expression(node.value)
             print(value)
         elif node.node_type == en.RW_IF:
+            # Handle if statement
             self.execute_control_flow(node)
         elif node.node_type == en.RW_WHILE:
+            # Handle while loop
             self.execute_control_flow(node)
         elif node.node_type == en.RW_FOR:
+            # Handle for loop
             self.execute_control_flow(node)
         elif node.node_type in (en.RW_INT, en.RW_BOOL, en.RW_STRING):
+            # Handle variable declaration
             self.execute_declaration(node)
         elif node.node_type == en.BLOCK:
-            print(node.value)
-            self.execute_statement(node.value)
-        elif node.value.node_type == en.OP_ASSIGN:
-            op_node = node.value 
-            print(f"OPNODE: {op_node.value}")
-            identifier = op_node.value[0][1]
-            value = self.evaluate_expression(op_node.value[1])
-            print(f"Identifier: {identifier}, Value: {value}")
-            self.variables[identifier] = value
-            print(f"Assignment: {identifier} = {value}")
+            # Handle block of statements
+            for child in node.children:
+                self.execute_statement(child)
         else:
             raise Exception(f"Unsupported statement node type: {node.node_type}")
         
     def execute_control_flow(self, node):
-        print(f"Executing if statement: {node}")
+        print(f"Executing control flow: {node.node_type}")
         if node.node_type == en.RW_IF:
+            print(f"Node value: {node.value}")
             condition = self.evaluate_expression(node.value[0])
             if condition:
                 self.execute_statement(node.value[1])
@@ -127,11 +127,6 @@ class Interpreter:
 
 
 code = """
-int x = 30;
-int y = 20;
-int z = x + y;
-
-print(z);
 
 if (x > y) {
     print("x is greater than y");
@@ -140,9 +135,16 @@ if (x > y) {
 }
 """
 
+# while (x > 0) {
+#     print(x);
+#     x = x - 1;
+# }
+
 parser = Parser(code)
-syntax_tree = parser.parse() 
+syntax_tree = parser.parse()
+
+syntax_tree.print_tree()  # Print the parsed syntax tree
 
 interpreter = Interpreter()
 
-interpreter.interpret(syntax_tree)  
+interpreter.interpret(syntax_tree)  # Execute the parsed syntax tree

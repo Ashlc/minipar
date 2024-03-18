@@ -1,4 +1,3 @@
-import json
 class SyntaxNode:
     def __init__(self, node_type, value=None):
         self.node_type = node_type

@@ -1,6 +1,6 @@
 from enum_tokens import TokenEnums as en
 
-
+# Dictionary of reserved words and symbols
 
 class WordDict:
     
