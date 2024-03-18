@@ -82,27 +82,27 @@ class Lexer:
 
         return TokenEnums.EOF, None
 
-# Test the lexer
-lexer = Lexer("""
-int x = 5;
-int y = 6;
-int z = x + y;
+# # Test the lexer
+# lexer = Lexer("""
+# int x = 5;
+# int y = 6;
+# int z = x + y;
 
-print("Hello, World!");
+# print("Hello, World!");
 
-if (x > y) {
-    print("x is greater than y");
-} else {
-    print("y is greater than x");
-}
+# if (x > y) {
+#     print("x is greater than y");
+# } else {
+#     print("y is greater than x");
+# }
 
-while (x > 0) {
-    print(x);
-    x = x - 1;
-}
-""")
-while True:
-    token_type, value = lexer.get_next_token()
-    if token_type == TokenEnums.EOF:
-        break
-    print(f"Token Type: {token_type.name}, Value: {value}")
+# while (x > 0) {
+#     print(x);
+#     x = x - 1;
+# }
+# """)
+# while True:
+#     token_type, value = lexer.get_next_token()
+#     if token_type == TokenEnums.EOF:
+#         break
+#     print(f"Token Type: {token_type.name}, Value: {value}")

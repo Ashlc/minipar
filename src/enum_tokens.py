@@ -70,6 +70,7 @@ class TokenEnums(Enum):
     BLOCK = 49
     DECLARATION = 50
     CALL = 51
+    PROGRAM = 52
 
     
     

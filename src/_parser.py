@@ -15,7 +15,7 @@ class Parser:
         return syntax_tree
 
     def parse_program(self):
-        syntax_tree = SyntaxNode("PROGRAM")
+        syntax_tree = SyntaxNode(en.PROGRAM)
         while self.current_token[0] != en.EOF:
             if self.current_token[0] == en.ID:
                 assignment_node = self.parse_assignment()
@@ -282,28 +282,28 @@ class Parser:
             raise SyntaxError(f"Unexpected token: expected {token_type}, got {self.current_token[0]}")
 
 
-# Test the parser
+# # Test the parser
 
-parser = Parser("""
-int x = 5;
-int y = 6;
-int z = x + y;
+# parser = Parser("""
+# int x = 5;
+# int y = 6;
+# int z = x + y;
 
-print("Hello, World!");
+# print("Hello, World!");
 
-if (x > y) {
-    print("x is greater than y");
-} else {
-    print("y is greater than x");
-}
+# if (x > y) {
+#     print("x is greater than y");
+# } else {
+#     print("y is greater than x");
+# }
 
-while (x > 0) {
-    print(x);
-    x = x - 1;
-}
-""")
+# while (x > 0) {
+#     print(x);
+#     x = x - 1;
+# }
+# """)
 
-tree = parser.parse()
-print("Printing syntax tree...")
-tree.print_tree()
+# tree = parser.parse()
+# print("Printing syntax tree...")
+# tree.print_tree()
 
