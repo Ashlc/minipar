@@ -218,7 +218,8 @@ class Parser:
             assignment_node.add_children(identifier_node)
             assignment_node.add_children(value)
             return assignment_node
-        elif token[0] in (en.OP_PLUS, en.OP_MINUS, en.OP_MULTIPLY, en.OP_DIVIDE):
+            
+        elif token[0] in (en.OP_PLUS, en.OP_MINUS):
             operator = token[0]
             self.eat(operator)
             value = self.parse_expression()
@@ -226,6 +227,14 @@ class Parser:
             operation_node = SyntaxNode(operator)
             operation_node.add_children(SyntaxNode(en.ID, identifier[1]))
             operation_node.add_children(value)
+            print(f"[parse_assignment] Returning node with type: ({operator})")
+            return operation_node
+        elif token[0] in (en.OP_INCREMENT, en.OP_DECREMENT):
+            operator = token[0]
+            self.eat(operator)
+            self.eat(en.DL_SEMICOLON)
+            operation_node = SyntaxNode(operator)
+            operation_node.add_children(SyntaxNode(en.ID, identifier[1]))
             print(f"[parse_assignment] Returning node with type: ({operator})")
             return operation_node
         
@@ -246,12 +255,25 @@ class Parser:
     def parse_term(self):
         node = self.parse_factor()
 
-        while self.current_token[0] in (en.OP_MULTIPLY, en.OP_DIVIDE):
+        while self.current_token[0] in (en.OP_MULTIPLY, en.OP_DIVIDE, en.OP_PLUS, en.OP_MINUS):
             token = self.current_token
             self.eat(token[0])
-            node = SyntaxNode(token[0], [node, self.parse_factor()])
+            operator = token[0]
+            rhs = self.parse_factor()
+            
+            # Create a new node for the operator
+            operator_node = SyntaxNode(operator)
+            # Add the left-hand side (LHS) as the first child
+            operator_node.add_children(node)
+            # Add the right-hand side (RHS) as the second child
+            operator_node.add_children(rhs)
+            
+            # Update the current node to be the operator node
+            node = operator_node
 
         return node
+
+
 
     def parse_factor(self):
             token = self.current_token
