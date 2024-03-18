@@ -207,15 +207,30 @@ class Parser:
     def parse_assignment(self):
         identifier = self.current_token
         self.eat(en.ID)
-        self.eat(en.OP_ASSIGN)
-        value = self.parse_expression()
-        self.eat(en.DL_SEMICOLON)
-        print(f"[parse_assignment] Returning node with type: ({en.OP_ASSIGN})")
-        assignment_node = SyntaxNode(en.OP_ASSIGN)
-        identifier_node = SyntaxNode(en.ID, identifier[1])
-        assignment_node.add_children(identifier_node)
-        assignment_node.add_children(value)
-        return SyntaxNode(en.OP_ASSIGN)
+        token = self.current_token
+        if token[0] == en.OP_ASSIGN:
+            self.eat(en.OP_ASSIGN)
+            value = self.parse_expression()
+            self.eat(en.DL_SEMICOLON)
+            print(f"[parse_assignment] Returning node with type: ({en.OP_ASSIGN})")
+            assignment_node = SyntaxNode(en.OP_ASSIGN)
+            identifier_node = SyntaxNode(en.ID, identifier[1])
+            assignment_node.add_children(identifier_node)
+            assignment_node.add_children(value)
+            return assignment_node
+        elif token[0] in (en.OP_PLUS, en.OP_MINUS, en.OP_MULTIPLY, en.OP_DIVIDE):
+            operator = token[0]
+            self.eat(operator)
+            value = self.parse_expression()
+            self.eat(en.DL_SEMICOLON)
+            operation_node = SyntaxNode(operator)
+            operation_node.add_children(SyntaxNode(en.ID, identifier[1]))
+            operation_node.add_children(value)
+            print(f"[parse_assignment] Returning node with type: ({operator})")
+            return operation_node
+        
+        else:
+            raise SyntaxError("Invalid assignment statement")
 
     def parse_expression(self):
         node = self.parse_term()
