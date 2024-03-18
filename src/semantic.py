@@ -53,13 +53,14 @@ class Semantics:
         print(f"Printing: {value}")
 
     def visit_OP_ASSIGN(self, node):
-        print("Visiting OP_ASSIGN")
         node.print_tree()
-        print(node.children)  # Debug print to see children
         if node.children:
             name = node.children[0].value  # Get the name from the identifier node
-            value_node = node.children[0].children[0]  # Get the value node
-            value = self.visit(value_node)
+            print(f"Name: {name}")
+            
+            if node.children[1].value is not None:
+                print(f"Value: {node.children[1].value}")
+                value = self.visit(node.children[1])
 
             if name in self.types[-1] and self.types[-1][name] != self.current_type:
                 raise Exception(f"Type error: variable '{name}' was declared as {self.types[-1][name]} but assigned a value of type {self.current_type}")
