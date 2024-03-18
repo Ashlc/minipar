@@ -21,4 +21,7 @@ class SyntaxNode:
         print(f'{indent}{self.node_type} of value {self.value if self.value else "--"}')
 
         for child in self.children:
-            child.print_tree(level + 1)
+            if child is not None:
+                child.print_tree(level + 1)
+            else:
+                print(f"{indent}    None")  # Print a message if a child is None

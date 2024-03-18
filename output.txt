@@ -1,0 +1,12 @@
+visit_RW_INT
+TokenEnums.RW_INT of value <syntax_tree.SyntaxNode object at 0x0000020B75ADBD60>
+visit_RW_INT
+TokenEnums.RW_IF of value [<syntax_tree.SyntaxNode object at 0x0000020B75ADBFD0>,
+<syntax_tree.SyntaxNode object at 0x0000020B75ADB760>,
+<syntax_tree.SyntaxNode object at 0x0000020B75ADB580>]
+visit_RW_IF
+TokenEnums.OP_GT of value [<syntax_tree.SyntaxNode object at 0x0000020B75ADBE20>, <syntax_tree.SyntaxNode object at 0x0000020B75ADBE80>]
+visit_OP_GT
+TokenEnums.ID of value a
+visit_ID
+a
