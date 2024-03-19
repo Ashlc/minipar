@@ -226,7 +226,8 @@ class Parser:
 
         while self.current_token[0] in (en.OP_MULTIPLY, en.OP_DIVIDE):
             token = self.current_token
-            self.eat([token[0]])
+            print(f"[parse_expression] Found a Multiply or Divide operator: {token[0]}")
+            self.eat(token[0])
             node = SyntaxNode(token[0], [node, self.parse_factor()])
 
         print(f"[parse_term] Returning node with type: ({node.node_type})")
@@ -235,7 +236,7 @@ class Parser:
     def parse_factor(self):
         print("Parsing a factor...")
         token = self.current_token
-
+        
         if token[0] == en.RW_INT:
             self.eat(en.RW_INT)
             print(f"[parse_factor] Parsed factor: {token[1]}, creating new node with type: {token[0]}")
@@ -283,15 +284,20 @@ class Parser:
 
 # Test the parser
 
-parser = Parser("""
-if (x > y) {
-    print("x is greater than y");
-} else {
-    print("y is greater than x");
+'''parser = Parser("""
+int n = 6;
+int a = 0;
+int b = 1;
+int temp = 0;
+while (a < n){
+    temp = a;
+    a = b;
+    b = temp + b;
 }
+print(a);
 """)
 
 tree = parser.parse()
 print("Printing syntax tree...")
-tree.print_tree()
+tree.print_tree()'''
 

@@ -16,7 +16,8 @@ class Semantics:
         self.types.pop()
 
     def visit(self, node):
-        method_name = f'visit_{str(node.node_type).replace(".", "_")}'
+        method_name = f'visit_{str(node.node_type).replace("TokenEnums.", "")}'
+        print(method_name)
         method = getattr(self, method_name, self.no_visit_method)
         return method(node)
 
@@ -30,6 +31,7 @@ class Semantics:
 
     def visit_RW_INT(self, node):
         self.current_type = 'RW_INT'
+        self.visit_TokenEnums_OP_ASSIGN(node)
     
     def visit_RW_BOOL(self, node):
         self.current_type = 'RW_BOOL'
@@ -45,9 +47,10 @@ class Semantics:
         value_node = node.value[1]
         value = self.visit(value_node)
 
+        print(f"Assigning {value} to {name}")
+
         if name in self.types[-1] and self.types[-1][name] != self.current_type:
             raise Exception(f"Type error: variable '{name}' was declared as {self.types[-1][name]} but assigned a value of type {self.current_type}")
-
         self.environments[-1][name] = value
         self.types[-1][name] = self.current_type
 
@@ -119,7 +122,7 @@ class Semantics:
             right = self.visit(node.children[1])
         if left != right:
             raise Exception("Type error: both operands must be of the same type")
-        return left == right
+        return 'RW_BOOL'
     
     def visit_OP_NOT_EQ(self, node):
         if len(node.children) == 0:
@@ -130,7 +133,7 @@ class Semantics:
             right = self.visit(node.children[1])
         if left != right:
             raise Exception("Type error: both operands must be of the same type")
-        return left != right
+        return 'RW_BOOL'
 
     def visit_OP_LT(self, node):
         if len(node.children) == 0:
@@ -141,7 +144,7 @@ class Semantics:
             right = self.visit(node.children[1])
         if left != right:
             raise Exception("Type error: both operands must be of the same type")
-        return left < right
+        return 'RW_BOOL'
 
     def visit_OP_GT(self, node):
         if len(node.children) == 0:
@@ -152,7 +155,7 @@ class Semantics:
             right = self.visit(node.children[1])
         if left != right:
             raise Exception("Type error: both operands must be of the same type")
-        return left > right
+        return 'RW_BOOL'
     
     def visit_OP_AND(self, node):
         if len(node.children) == 0:
@@ -163,7 +166,7 @@ class Semantics:
             right = self.visit(node.children[1])
         if not left == 'RW_BOOL' or not right == 'RW_BOOL':
             raise Exception("Type error: both operands must be booleans")
-        return left and right
+        return 'RW_BOOL'
 
     def visit_OP_NOT(self, node):
         if len(node.children) == 0:
@@ -172,7 +175,7 @@ class Semantics:
             value = self.visit(node.children[0])
         if not value == 'RW_BOOL':
             raise Exception("Type error: operand must be a boolean")
-        return not value
+        return 'RW_BOOL'
 
     def visit_OP_OR(self, node):
         if len(node.children) == 0:
@@ -183,17 +186,19 @@ class Semantics:
             right = self.visit(node.children[1])
         if not left == 'RW_BOOL' or not right == 'RW_BOOL':
             raise Exception("Type error: both operands must be booleans")
-        return left or right
+        return 'RW_BOOL'
 
     def visit_RW_IF(self, node):
         if len(node.children) == 0:
+            expected_input = node.value[1]
             condition = self.visit(node.value[0])
         else:
+            expected_input = node.value[1]
             condition = self.visit(node.children[0])
-
+        print(condition)
         if condition == 'RW_BOOL':
             self.enter_scope() # Enter a new scope for the 'then' branch
-            self.visit(node.children[1])  # Visit the 'then' branch
+            self.visit(expected_input)  # Visit the 'then' branch
             self.exit_scope() # Exit the scope for the 'then' branch
 
             if len(node.children) > 2:
@@ -246,23 +251,18 @@ class Semantics:
         else:
             cond_node = self.visit(node.children[0])
             body_node = self.visit(node.children[1])
-
         # Enter a new scope for the loop
         self.enter_scope()
-
         # Check the condition
-        while True:
-            cond_value = self.visit(cond_node)
-            if cond_value != 'RW_BOOL':
-                raise Exception(f"Type error: condition in 'while' statement must be boolean, got {cond_value}")
-            if not cond_value:
-                break
-
+            #cond_value = self.visit(cond_node)
+        if cond_node != 'RW_BOOL': #if cond_value != 'RW_BOOL':
+            raise Exception(f"Type error: condition in 'while' statement must be boolean, got {cond_node}")
             # Visit the body of the loop
-            self.visit(body_node)
-
+            #self.visit(body_node)
         # Exit the loop's scope
         self.exit_scope()
+
+        return body_node
     
     def visit_RW_SEQ(self, node):
         if len(node.children) == 0:
@@ -277,12 +277,22 @@ class Semantics:
         else:
             body_node = self.visit(node.children[0])
         return body_node
+    
+    def visit_BLOCK(self, node):
+        pass
+
+    def visit_RW_PRINT(self, node):
+        pass
 
 # Dividing is getting a sintax error
 parser = Parser("""
-int a = 10;
-int b = 20;
-int c = a + b;
+int n = 5;
+int resultado = 1;
+while (n > 1){
+    resultado = n * resultado;
+    n = n - 1;
+}
+print(resultado);
 """)
 
 tree = parser.parse()
