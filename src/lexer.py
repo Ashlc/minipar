@@ -3,6 +3,7 @@ from dictionary import WordDict
 from enum_tokens import TokenEnums
 from tk import *
 
+
 class Lexer:
     def __init__(self, text):
         self.text = text
@@ -18,11 +19,12 @@ class Lexer:
             self.advance()
 
     def parse_id_or_keyword(self):
-        result = ''
-        while self.current_char is not None and (self.current_char.isalnum() or self.current_char == '_'):
+        result = ""
+        while self.current_char is not None and (
+            self.current_char.isalnum() or self.current_char == "_"
+        ):
             result += self.current_char
             self.advance()
-
 
         if result.lower() in WordDict.words:
             return WordDict.words[result.lower()], result
@@ -35,11 +37,11 @@ class Lexer:
                 self.skip_whitespace()
                 continue
 
-            if self.current_char.isalpha() or self.current_char == '_':
+            if self.current_char.isalpha() or self.current_char == "_":
                 return self.parse_id_or_keyword()
 
             if self.current_char.isdigit():
-                num_str = ''
+                num_str = ""
                 while self.current_char is not None and self.current_char.isdigit():
                     num_str += self.current_char
                     self.advance()
@@ -48,7 +50,7 @@ class Lexer:
             char = self.current_char
 
             if char == '"':
-                string_value = ''
+                string_value = ""
                 self.advance()
                 while self.current_char is not None and self.current_char != '"':
                     string_value += self.current_char
@@ -56,51 +58,27 @@ class Lexer:
                 self.advance()
                 return TokenEnums.STRING_LITERAL, string_value
 
-            if char == '{':
+            if char == "{":
                 self.advance()
                 return TokenEnums.DL_LBRACE, char
-            elif char == '}':
+            elif char == "}":
                 self.advance()
                 return TokenEnums.DL_RBRACE, char
-            elif char == '(':
+            elif char == "(":
                 self.advance()
                 return TokenEnums.DL_LPAREN, char
-            elif char == ')':
+            elif char == ")":
                 self.advance()
                 return TokenEnums.DL_RPAREN, char
-            elif char == ',':
+            elif char == ",":
                 self.advance()
-                return TokenEnums.COMMA, char
+                return TokenEnums.DL_COMMA, char
             elif char in WordDict.symbols:
                 self.advance()
                 return WordDict.symbols[char], char
-            elif char == '#':
-                while self.current_char is not None and self.current_char != '\n':
+            elif char == "#":
+                while self.current_char is not None and self.current_char != "\n":
                     self.advance()
                 continue
 
         return TokenEnums.EOF, None
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

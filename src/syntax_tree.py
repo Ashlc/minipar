@@ -1,4 +1,6 @@
 import json
+
+
 class SyntaxNode:
     def __init__(self, node_type, value=None):
         self.node_type = node_type
@@ -18,7 +20,7 @@ class SyntaxNode:
 
     def print_tree(self, level=0):
         indent = "    " * level
-        print(f'{indent}{self.node_type} of value {self.value if self.value else "--"}')
+        print(f'{indent}{self.node_type} of value {self.value if self.value is not None else "--"}')
 
         for child in self.children:
             child.print_tree(level + 1)
