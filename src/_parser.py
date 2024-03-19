@@ -35,7 +35,13 @@ class Parser:
     
     def parse_declaration(self):
         token = self.current_token
-        self.eat(en.RW_INT)
+        print(f"[parse_declaration] Token: {token[0]}")
+        if token[0] in (en.RW_INT, en.RW_BOOL, en.RW_STRING):
+            self.eat(token[0])
+            identifier = self.current_token
+        else:
+            raise SyntaxError(f"Invalid declaration: {token[0]}, expected a type")
+        
         identifier = self.current_token
         self.eat(en.ID)
         self.eat(en.OP_ASSIGN)
@@ -47,18 +53,42 @@ class Parser:
         
         print(f"identifier: {identifier}")
         
-        # Create a new node for the identifier
-        identifier_node = SyntaxNode(en.ID, identifier)
-        
         # Add the identifier and value nodes as children of the assignment node
+        identifier_node = SyntaxNode(en.ID, identifier[1])
         assignment_node.add_children(identifier_node)
         assignment_node.add_children(value)
         
         # Create a new node for the declaration
-        declaration_node = SyntaxNode(en.RW_INT)
+        declaration_node = SyntaxNode(token[0])
         declaration_node.add_children(assignment_node)
         
+        print(f"[parse_declaration] Returning node. Tree: {declaration_node.print_tree()}")
         return declaration_node
+    
+    # def parse_declaration(self):
+    #     token = self.current_token
+    #     self.eat(en.RW_INT)
+    #     identifier = self.current_token
+    #     self.eat(en.ID)
+    #     self.eat(en.OP_ASSIGN)
+    #     value = self.parse_expression()
+    #     self.eat(en.DL_SEMICOLON)
+        
+    #     # Create a new node for the assignment
+    #     assignment_node = SyntaxNode(en.OP_ASSIGN)
+        
+    #     # Create a new node for the identifier
+    #     identifier_node = SyntaxNode(en.ID, identifier[1])
+        
+    #     # Add the identifier and value nodes as children of the assignment node
+    #     identifier_node.add_children(value)
+    #     assignment_node.add_children(identifier_node)
+        
+    #     # Create a new node for the declaration and add the assignment node as its child
+    #     declaration_node = SyntaxNode(en.RW_INT)
+    #     declaration_node.add_children(assignment_node)
+
+    #     return declaration_node
     
     def parse_block(self):
         block_node = SyntaxNode(en.BLOCK)
@@ -179,31 +209,6 @@ class Parser:
         print_node.add_children(expression)
         return print_node
     
-    def parse_declaration(self):
-        token = self.current_token
-        self.eat(en.RW_INT)
-        identifier = self.current_token
-        self.eat(en.ID)
-        self.eat(en.OP_ASSIGN)
-        value = self.parse_expression()
-        self.eat(en.DL_SEMICOLON)
-        
-        # Create a new node for the assignment
-        assignment_node = SyntaxNode(en.OP_ASSIGN)
-        
-        # Create a new node for the identifier
-        identifier_node = SyntaxNode(en.ID, identifier[1])
-        
-        # Add the identifier and value nodes as children of the assignment node
-        identifier_node.add_children(value)
-        assignment_node.add_children(identifier_node)
-        
-        # Create a new node for the declaration and add the assignment node as its child
-        declaration_node = SyntaxNode(en.RW_INT)
-        declaration_node.add_children(assignment_node)
-
-        return declaration_node
-    
     def parse_assignment(self):
         identifier = self.current_token
         self.eat(en.ID)
@@ -212,11 +217,12 @@ class Parser:
             self.eat(en.OP_ASSIGN)
             value = self.parse_expression()
             self.eat(en.DL_SEMICOLON)
-            print(f"[parse_assignment] Returning node with type: ({en.OP_ASSIGN})")
             assignment_node = SyntaxNode(en.OP_ASSIGN)
             identifier_node = SyntaxNode(en.ID, identifier[1])
             assignment_node.add_children(identifier_node)
             assignment_node.add_children(value)
+            print(f"[parse_assignment] Returning node with type: ({en.OP_ASSIGN}). Tree:")
+            assignment_node.print_tree()
             return assignment_node
             
         elif token[0] in (en.OP_PLUS, en.OP_MINUS):
