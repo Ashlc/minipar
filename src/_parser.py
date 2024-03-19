@@ -38,6 +38,9 @@ class Parser:
                 en.RW_FOR,
                 en.RW_PRINT,
                 en.RW_INPUT,
+                en.RW_C_CHANNEL,
+                en.RW_SEQ,
+                en.RW_PAR,
             ):
                 statement_node = self.parse_statement()
                 print(
@@ -133,8 +136,13 @@ class Parser:
             return self.parse_print()
         elif token_type == en.RW_INPUT:
             return self.parse_input()
+        elif token_type == en.RW_C_CHANNEL:
+            return self.parse_c_channel()
+        elif token_type == en.RW_SEQ:
+            return self.parse_seq()
+        elif token_type == en.RW_PAR:
+            return self.parse_par()
         else:
-
             return self.parse_expression()
 
     def parse_if_statement(self):
@@ -177,13 +185,13 @@ class Parser:
         self.eat(en.DL_RPAREN)
         block = self.parse_block()
         print("[parse_for_statement] Returning node with type: (FOR)")
-        return SyntaxNode(en.RW_FOR, [init, condition, increment, block])
+        for_node = SyntaxNode(en.RW_FOR, condition)
+        for_node.add_children(init)
+        for_node.add_children(increment)
+        for_node.add_children(block)
 
     def parse_c_channel(self):
         self.eat(en.RW_C_CHANNEL)
-        self.eat(en.DL_LPAREN)
-
-        self.eat(en.DL_RPAREN)
         block = self.parse_block()
         print("[parse_c_channel] Returning node with type: (C_CHANNEL)")
         channel_node = SyntaxNode(en.RW_C_CHANNEL)
@@ -192,9 +200,6 @@ class Parser:
 
     def parse_seq(self):
         self.eat(en.RW_SEQ)
-        self.eat(en.DL_LPAREN)
-
-        self.eat(en.DL_RPAREN)
         block = self.parse_block()
         print("[parse_seq] Returning node with type: (SEQ)")
         seq_node = SyntaxNode(en.RW_SEQ)
@@ -203,9 +208,6 @@ class Parser:
 
     def parse_par(self):
         self.eat(en.RW_PAR)
-        self.eat(en.DL_LPAREN)
-
-        self.eat(en.DL_RPAREN)
         block = self.parse_block()
         print("[parse_par] Returning node with type: (PAR)")
         par_node = SyntaxNode(en.RW_PAR)

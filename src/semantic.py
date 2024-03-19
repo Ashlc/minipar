@@ -154,6 +154,35 @@ class Semantics:
         op = self.get_operands(node)
         return SyntaxNode(en.NUM, op["left"] - op["right"])
 
+    def visit_RW_PAR(self, node):
+        self.enter_scope()
+        self.visit(node.children[0])
+        self.exit_scope()
+
+    def visit_RW_SEQ(self, node):
+        self.enter_scope()
+        for child in node.children:
+            self.visit(child)
+        self.exit_scope()
+
+    def visit_RW_FOR(self, node):
+        self.enter_scope()
+        condition_node = self.visit(node.value)
+        init = self.visit(node.children[0])
+        increment = self.visit(node.children[1])
+        block_node = self.visit(node.children[2])
+
+        if not condition_node.node_type == en.RW_BOOL:
+            raise Exception("Type error: condition must be boolean")
+
+        if not init.node_type == en.RW_INT or not increment.node_type == en.RW_INT:
+            raise Exception("Type error: both operands must be integers")
+
+        if not block_node.node_type == en.RW_INT:
+            raise Exception("Type error: block must return an integer")
+
+        self.exit_scope()
+
     def visit_RW_WHILE(self, node):
         condition_node = node.value
         block_node = node.children[0]
@@ -202,6 +231,17 @@ parser = Parser(
     }
     par {
         print(resultado);
+    }
+    
+    seq {
+        int i = 0;
+        for (i = 0; i < 5; i = i + 1) {
+            print(i);
+        }
+    }
+    
+    for (int i = 0; i < 5; i = i + 1) {
+        print(i);
     }
 """
 )
