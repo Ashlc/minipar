@@ -8,14 +8,13 @@ class Semantics:
     def __init__(self):
         self.global_env = {}
         self.local_envs = [{}]
-        # self.environments = [{}]
 
     def enter_scope(self):
-        # Create a new empty environment for variables in the new scope
+
         self.local_envs.append({})
 
     def exit_scope(self):
-        # Remove the current environment when exiting a scope
+
         self.local_envs.pop()
 
     def update_global_variable(self, name, value, var_type):
@@ -73,7 +72,8 @@ class Semantics:
 
     def visit_RW_PRINT(self, node):
         value = self.visit(node.children[0]).value
-        print(f"      [OUTPUT]: {value}")
+        if value is None:
+            raise Exception("ValueError: cannot print None")
 
     def visit_OP_ASSIGN(self, node):
         name = node.children[0].value
@@ -85,11 +85,9 @@ class Semantics:
         ):
             value_node = self.visit(value_node)
 
-        print(value_node, value_node.node_type, value_node.value)
         value = value_node.value
         var_type = value_node.node_type
 
-        # Check if the variable is in the global environment
         if name in self.global_env:
             self.update_global_variable(name, value, var_type)
         else:
@@ -98,7 +96,6 @@ class Semantics:
     def visit_ID(self, node):
         name = node.value
 
-        # Search for the variable in local environments first
         for env in reversed(self.local_envs):
             if name in env:
                 found_var = env[name]
@@ -110,7 +107,6 @@ class Semantics:
                 else:
                     return SyntaxNode(env[name]["type"], env[name]["value"])
 
-        # If not found in local environments, check global environment
         if name in self.global_env:
             return SyntaxNode(
                 self.global_env[name]["type"], self.global_env[name]["value"]
@@ -130,7 +126,7 @@ class Semantics:
             raise Exception("Type error: expected string")
 
     def visit_BLOCK(self, node):
-        # Save the previous global environment for restoration after the block
+
         prev_global_env = self.global_env.copy()
 
         self.enter_scope()
@@ -138,7 +134,6 @@ class Semantics:
             self.visit(statement_node)
         self.exit_scope()
 
-        # Update global variables with changes made within the block
         for name, value in self.global_env.items():
             if name not in prev_global_env or prev_global_env[name] != value:
                 self.update_global_variable(name, value)
@@ -160,20 +155,19 @@ class Semantics:
         return SyntaxNode(en.NUM, op["left"] - op["right"])
 
     def visit_RW_WHILE(self, node):
-        node.print_tree()
-        condition_node = node.children[0]
-        block_node = node.children[1]
+        condition_node = node.value
+        block_node = node.children[0]
 
-        while self.visit(condition_node):
-            self.visit(block_node)
+        condition_value = self.visit(condition_node).value
+
+        if condition_value:  # If condition is true, analyze the block
+            self.enter_scope()  # Enter scope for the block analysis
+            self.visit(block_node)  # Analyze the block
+            self.exit_scope()  # Exit the block scope
 
     def visit_comparison(self, node):
-        node.print_tree()
         left = self.visit(node.children[0])
         right = self.visit(node.children[1])
-
-        print(f"Left: {left}")
-        print(f"Right: {right}")
 
         if left.node_type == right.node_type:
             return en.RW_BOOL
@@ -183,17 +177,13 @@ class Semantics:
 
     def visit_RW_IF(self, node):
         condition_type = self.visit(node.value)
-        print(f"Condition type: {condition_type}")
+        node.print_tree()
 
         if condition_type == en.RW_BOOL:
             self.enter_scope()
-            self.visit(node.children[1])
+            self.visit(node.children[0])
             self.exit_scope()
 
-            if len(node.children) > 2:
-                self.enter_scope()
-                self.visit(node.children[2])
-                self.exit_scope()
         else:
             raise Exception("Type error: condition in 'if' statement must be boolean")
 
@@ -203,16 +193,16 @@ parser = Parser(
     int n = 5;
     int resultado = 1;
     n = n + 1;
-    print(n);
-    while (n > 1){
-        resultado = n * resultado;
-        n = n - 1;
-        print(n);
-        int a = 1;
-        a = 2;
-        print(a);
+    if (n > 5) {
+        resultado = resultado * n;
     }
-    print(resultado);
+    while (n > 0) {
+        resultado = resultado * n;
+        n = n - 1;
+    }
+    par {
+        print(resultado);
+    }
 """
 )
 
