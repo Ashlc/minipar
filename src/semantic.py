@@ -167,12 +167,17 @@ class Semantics:
 
     def visit_RW_FOR(self, node):
         self.enter_scope()
+        print(f"[FOR] Node: {node.print_tree()}")
         condition_node = self.visit(node.value)
         init = self.visit(node.children[0])
         increment = self.visit(node.children[1])
         block_node = self.visit(node.children[2])
 
-        if not condition_node.node_type == en.RW_BOOL:
+        print(f"Condition node: {condition_node}")
+        print(f"Init: {init}")
+        print(f"Increment: {increment}")
+
+        if not condition_node == en.RW_BOOL:
             raise Exception("Type error: condition must be boolean")
 
         if not init.node_type == en.RW_INT or not increment.node_type == en.RW_INT:
