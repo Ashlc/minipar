@@ -1,7 +1,7 @@
 from enum import Enum
 
 class TokenEnums(Enum):
-    # Reserved Words - Types
+    # Palavras Reservadas - Tipos
     RW_INT = 1
     RW_BOOL = 2
     RW_STRING = 3
@@ -10,7 +10,7 @@ class TokenEnums(Enum):
     RW_FALSE = 6
     RW_NULL = 7
 
-    # Reserved Words - Control Flow
+    # Palavras Reservadas - Fluxo de Controle
     RW_SEQ = 8
     RW_PAR = 9
     RW_IF = 10
@@ -20,7 +20,7 @@ class TokenEnums(Enum):
     RW_FOR = 44
     RW_RETURN = 43
     
-    # Operators and Delimiters
+    # Operadores e Delimitadores
     OP_ASSIGN = 14  # =
     OP_PLUS = 15    # +
     OP_MINUS = 16   # -
@@ -36,19 +36,19 @@ class TokenEnums(Enum):
     DL_LBRACKET = 26  # [
     DL_RBRACKET = 27  # ]
     
-    # Identifiers and Literals
+    # Identificadores e Literais
     ID = 28
     NUM = 29  
     STRING_LITERAL = 30
     
-    # End of File
+    # Fim do Arquivo
     EOF = 31
     
-    # Python Built-in Functions
+    # Funções Internas do Python
     RW_PRINT = 32
     RW_INPUT = 33
     
-    # Boolean Operators
+    # Operadores Booleanos
     OP_AND = 34
     OP_OR = 35
     OP_NOT = 36
@@ -59,13 +59,13 @@ class TokenEnums(Enum):
     OP_GT = 41
     OP_GE = 42
     
-    # Increment and Decrement
+    # Incremento e Decremento
     OP_INC = 45
     OP_DEC = 46
     OP_PLUS_ASSIGN = 47
     OP_MINUS_ASSIGN = 48
     
-    # Block and Statement
+    # Bloco e Declaração
     
     BLOCK = 49
     DECLARATION = 50

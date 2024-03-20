@@ -4,15 +4,17 @@ from lexer import Lexer
 
 
 class Parser:
-
+    # Inicializador da classe Parser
     def __init__(self, file):
         self.lexer = Lexer(file)
         self.current_token = self.lexer.get_next_token()
-
+    
+    # Função principal de análise sintática
     def parse(self):
         syntax_tree = self.parse_program()
         return syntax_tree
-
+    
+    # Analisa um programa
     def parse_program(self):
         syntax_tree = SyntaxNode(en.PROGRAM)
         while self.current_token[0] != en.EOF:
@@ -38,7 +40,7 @@ class Parser:
             else:
                 raise SyntaxError(f"Unexpected token: {self.current_token[0]}")
         return syntax_tree
-
+    # Analisa uma declaração
     def parse_declaration(self):
         token = self.current_token
         if token[0] in (en.RW_INT, en.RW_BOOL, en.RW_STRING):
@@ -63,7 +65,8 @@ class Parser:
         declaration_node.add_children(assignment_node)
 
         return declaration_node
-
+   
+    # Analisa um bloco de código delimitado por chaves { }
     def parse_block(self):
         block_node = SyntaxNode(en.BLOCK)
         self.eat(en.DL_LBRACE)
@@ -73,6 +76,7 @@ class Parser:
         self.eat(en.DL_RBRACE)
         return block_node
 
+    # Analisa uma declaração ou instrução
     def parse_statement(self):
         token_type = self.current_token[0]
 
@@ -99,6 +103,7 @@ class Parser:
         else:
             return self.parse_expression()
 
+    # Analisa uma instrução IF
     def parse_if_statement(self):
         self.eat(en.RW_IF)
         self.eat(en.DL_LPAREN)
@@ -115,6 +120,7 @@ class Parser:
             if_node.add_children(else_block)
         return if_node
 
+    # Analisa uma instrução WHILE
     def parse_while_statement(self):
         self.eat(en.RW_WHILE)
         self.eat(en.DL_LPAREN)
@@ -127,6 +133,7 @@ class Parser:
 
         return while_node
 
+    # Analisa uma instrução FOR
     def parse_for_statement(self):
         self.eat(en.RW_FOR)
         self.eat(en.DL_LPAREN)
@@ -152,6 +159,7 @@ class Parser:
 
         return for_node
 
+    # Analisa uma instrução de comunicação em canal C
     def parse_c_channel(self):
         token = self.current_token
         self.eat(en.RW_C_CHANNEL)
@@ -166,6 +174,7 @@ class Parser:
         self.eat(en.DL_SEMICOLON)
         return channel_node
 
+    # Analisa os parâmetros de uma função ou método
     def parse_params(self):
         self.eat(en.DL_LPAREN)
         params = []
@@ -177,6 +186,7 @@ class Parser:
         self.eat(en.DL_RPAREN)
         return params
 
+    # Analisa uma instrução SEQ
     def parse_seq(self):
         self.eat(en.RW_SEQ)
         block = self.parse_block()
@@ -184,6 +194,7 @@ class Parser:
         seq_node.add_children(block)
         return seq_node
 
+    # Analisa uma instrução PAR
     def parse_par(self):
         self.eat(en.RW_PAR)
         block = self.parse_block()
@@ -191,6 +202,7 @@ class Parser:
         par_node.add_children(block)
         return par_node
 
+    # Analisa uma instrução de entrada
     def parse_input(self):
         self.eat(en.RW_INPUT)
         params = self.parse_params()
@@ -200,7 +212,8 @@ class Parser:
         input_node.add_children(params[0])
         self.eat(en.DL_SEMICOLON)
         return input_node
-
+    
+    # Analisa uma instrução de impressão
     def parse_print(self):
         self.eat(en.RW_PRINT)
         self.eat(en.DL_LPAREN)
@@ -214,7 +227,8 @@ class Parser:
         self.eat(en.DL_RPAREN)
         self.eat(en.DL_SEMICOLON)
         return print_node
-
+    
+    # Analisa uma instrução de atribuição
     def parse_assignment(self):
         identifier = self.current_token
         self.eat(en.ID)
@@ -253,6 +267,7 @@ class Parser:
         else:
             raise SyntaxError("Invalid assignment statement")
 
+    # Analisa uma expressão
     def parse_expression(self):
 
         node = self.parse_term()
@@ -277,7 +292,8 @@ class Parser:
             operator_node.add_children(self.parse_term())
             node = operator_node
         return node
-
+    
+    # Analisa um termo
     def parse_term(self):
         node = self.parse_factor()
 
@@ -301,7 +317,8 @@ class Parser:
             node = operator_node
 
         return node
-
+    
+    # Analisa um fator
     def parse_factor(self):
         token = self.current_token
         if token[0] == en.RW_INT:
@@ -328,7 +345,8 @@ class Parser:
             raise SyntaxError(
                 f"Invalid factor: {token[0]}, expected an identifier, integer, or expression"
             )
-
+        
+    # Consome um token
     def eat(self, token_type):
         if self.current_token[0] == token_type:
             self.current_token = self.lexer.get_next_token()

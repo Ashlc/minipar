@@ -42,20 +42,18 @@ def c_channel(host, type):
         print("[SERVER] Waiting for connections...")
         first = True
         op = False
+        print("Waiting for connections...")
         conn, addr = server.accept()  # Aceitando conexão do cliente
         try:
             while True:
-                print("Waiting for connections...")
                 if first:
                     print(f"[SERVER] Connected to {addr}")
                     conn.send("What procedure do you wish to execute?".encode(format))
                     first = False
 
                 a = conn.recv(size).decode(format) # Recebendo dados do cliente
-                print(a)
                 print(f"[SERVER] Received command: {a} from {addr}")
                 if a == "exit":
-                    print("Breaking")
                     break
 
                 elif a == "calculadora" and op == False:
@@ -67,7 +65,6 @@ def c_channel(host, type):
                     print(f"[SERVER] Received expression: {a} from {addr}")
                     a = a.replace("Expression: ", "")
                     a = a.split()
-                    print(a[0],a[1],a[2])
                     result = _calculate(a[0],a[1],a[2]) # Realizando cálculo
                     message = f"Result: {result}"
                     conn.send(message.encode("ascii")) # Enviando resultado de volta para o cliente
@@ -93,11 +90,11 @@ def c_channel(host, type):
                 expression = input("Enter your expression: ")
                 expression = "Expression: " + expression
                 client.send(expression.encode(format))
-                print(f"Sent expression: {expression}")
+                print(f"Message Sent: {expression}")
             elif "Invalid" in message:
                 break
             elif message.startswith("Result"):
-                print(f"Result: {message}")
+                print(f"{message}")
                 break
         client.close() # Fechando soquete do cliente ao finalizar
 
