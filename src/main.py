@@ -8,7 +8,10 @@ import threading
 import socket
 
 input_file = """
-c_channel(operation, client_1, client_2);
+
+par{
+    int i = 0;
+}
 """
 
 interpreter = Interpreter(input_file, export=True)

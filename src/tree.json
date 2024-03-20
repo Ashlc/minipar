@@ -3,22 +3,36 @@
     "value": "--",
     "children": [
         {
-            "node_type": "RW_C_CHANNEL",
-            "value": {
-                "node_type": "ID",
-                "value": "operation",
-                "children": []
-            },
+            "node_type": "RW_PAR",
+            "value": "--",
             "children": [
                 {
-                    "node_type": "ID",
-                    "value": "client_1",
-                    "children": []
-                },
-                {
-                    "node_type": "ID",
-                    "value": "client_2",
-                    "children": []
+                    "node_type": "BLOCK",
+                    "value": "--",
+                    "children": [
+                        {
+                            "node_type": "RW_INT",
+                            "value": "--",
+                            "children": [
+                                {
+                                    "node_type": "OP_ASSIGN",
+                                    "value": "--",
+                                    "children": [
+                                        {
+                                            "node_type": "ID",
+                                            "value": "i",
+                                            "children": []
+                                        },
+                                        {
+                                            "node_type": "NUM",
+                                            "value": 0,
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         }

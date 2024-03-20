@@ -99,7 +99,7 @@ class SyntaxNode:
             #return f"{indent}for {init}; {condition}; {increment}:\n{block}"
 
 
-        # Antes o IF era obrigado a ter um else, eu mudei pra funcionar mesmo sem.
+        # Antes o IF era OBRIGADO a ter um else, eu mudei pra funcionar mesmo sem.
         elif self.node_type == en.RW_IF:
             condition = self.value.evaluate()
             block_true = self.children[0].evaluate(indent_level + 1)
@@ -110,7 +110,7 @@ class SyntaxNode:
                 return f"{indent}if {condition}:\n{block_true}"
             
 
-        # Eu tirei o {indent} daqui pq no while a primeira linha tinha o dobro de identação.
+        # Eu tirei o {indent} daqui pq no while a primeira linha tinha o dobro de identação. E não afetou as outras funções (eu acho)
         elif self.node_type == en.BLOCK:
             block_code = ""
             for child in self.children:
@@ -155,14 +155,14 @@ class SyntaxNode:
             # então não sei como implementar, mas a ideia seria algo como feito a seguir
             blocks = []
             # Pega os N blocos
-            block = self.children[0].evaluate()
+            block = self.children[0].evaluate(indent_level - 1)
             blocks.append(block)
             print(block)
-            # Ele ta com um mini mini problema com o print, não sei pq mas o print pega un indetantion extra quando roda dentro do par.
             return f"par_block({blocks})"
         
+        # Funciona.
         elif self.node_type == en.RW_SEQ:
-            block = self.children[0].evaluate(indent_level + 1)
+            block = self.children[0].evaluate(indent_level - 1)
             return f"{indent}{block}"
         
         # Eu não sei como ficou a sintaxe do channel, mas ACHO que é assim
@@ -176,8 +176,8 @@ class SyntaxNode:
             return f"{indent}c_channel({operation}, {comp1}, {comp2})\n"
 
         # Eu não sei se era pra ter uma função calculadora_send e calculadora_receive,
-        # Então n sei como prossegue a partir. 
+        # Então n sei como faza pra implementar elas
         # Mas se tiver é só fazer como ai em cima e estruturar a chamada da função.
-        # As funçoes em si eu já fiz.
+        # As funçoes no main eu já fiz.
         else:
             raise ValueError(f"Invalid node_type enum {self.node_type}")
