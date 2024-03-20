@@ -133,6 +133,10 @@ class SyntaxNode:
 
             return f"{indent}print({expression})\n"
 
+        elif self.node_type == en.RW_INPUT:
+            variable = self.children[0].evaluate()
+            return f"{indent}{variable} = input()"
+
         elif self.node_type in [
             en.OP_GT,
             en.OP_LT,
@@ -180,10 +184,9 @@ class SyntaxNode:
         # Also c_channel ta com problema no parser, não sei o pq. Talvez seja eu escrevendo na sintaxe errada mesmo.
 
         elif self.node_type == en.RW_C_CHANNEL:
-            operation = self.children[0].evaluate(indent_level)
-            server = self.children[1].evaluate(indent_level)
-            type = self.children[2].evaluate(indent_level)
-            return f"{indent}c_channel({operation}, {server}, {type})\n"
+            host = self.children[0].evaluate(indent_level)
+            type = self.children[1].evaluate(indent_level)
+            return f"{indent}c_channel({host}, {type})\n"
 
         # Eu não sei se era pra ter uma função calculadora_send e calculadora_receive,
         # Então n sei como faza pra implementar elas

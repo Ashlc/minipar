@@ -163,7 +163,6 @@ class Parser:
         channel_node = SyntaxNode(en.RW_C_CHANNEL)
         channel_node.add_children(params[0])
         channel_node.add_children(params[1])
-        channel_node.add_children(params[2])
         self.eat(en.DL_SEMICOLON)
         return channel_node
 
@@ -194,10 +193,12 @@ class Parser:
 
     def parse_input(self):
         self.eat(en.RW_INPUT)
-        self.eat(en.DL_LPAREN)
-        self.eat(en.DL_RPAREN)
-        self.eat(en.DL_SEMICOLON)
+        params = self.parse_params()
+        if len(params) != 1:
+            raise SyntaxError("Invalid number of parameters for input")
         input_node = SyntaxNode(en.RW_INPUT)
+        input_node.add_children(params[0])
+        self.eat(en.DL_SEMICOLON)
         return input_node
 
     def parse_print(self):

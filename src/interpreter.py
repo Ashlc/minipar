@@ -4,15 +4,61 @@ from enum_tokens import TokenEnums as en
 import json
 import threading
 import socket
-from server import Server
-from client import Client
+
+# from server import Server
+# from client import Client
 
 
-def c_channel(procedure, server, type):
-    print(f"Connecting to {server} with procedure {procedure}")
-    server = Server(server)
-    server.set_procedure(procedure)
-    print(f"Server running on {server.addr}")
+def c_channel(host, type):
+    this_addr = (host, 5546)
+    size = 1024
+    format = "utf-8"
+    procedure = None
+
+    if type == "server":
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.bind(this_addr)
+        server.listen()
+        print("[SERVER] Waiting for connections...")
+        first = True
+
+        while True:
+            conn, addr = server.accept()
+
+            if first:
+                print(f"[SERVER] Connected to {addr}")
+                conn.send("What procedure do you wish to execute?".encode(format))
+                first = False
+
+            a = conn.recv(size).decode(format)
+
+            if a == "exit":
+                break
+
+            if a == "calculadora":
+                procedure = a
+                conn.send("Awaiting expression...".encode("ascii"))
+                continue
+
+            if procedure == "calculadora":
+                result = calculate(a)
+                print(f"[SERVER] Sending result: {result} to {addr}")
+                conn.send(str(result).encode("ascii"))
+            else:
+                conn.send("Invalid command".encode("ascii"))
+
+    elif type == "client":
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect(this_addr)
+        client.send(procedure.encode(format))
+
+
+def calculate(expression):
+    try:
+        result = eval(expression)
+        return result
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 
 def par_block(block):

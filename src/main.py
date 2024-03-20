@@ -9,10 +9,7 @@ import socket
 
 input_file = """
 
-string server = "localhost";
-string procedure = "calculadora";
-string type = "client";
-c_channel(procedure, server, type);
+c_channel("localhost", "server")
 
 """
 

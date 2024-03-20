@@ -75,6 +75,9 @@ class SemanticAnalyzer:
         if value is None:
             raise Exception("ValueError: cannot print None")
 
+    def visit_RW_INPUT(self, node):
+        value = self.visit(node.children[0])
+
     def visit_OP_ASSIGN(self, node):
         name = node.children[0].value
         value_node = node.children[1]
