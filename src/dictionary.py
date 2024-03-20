@@ -20,8 +20,6 @@ class WordDict:
         "print": en.RW_PRINT,
         "input": en.RW_INPUT,
         "for": en.RW_FOR,
-        "chan_send": en.RW_CHAN_SEND,
-        "chan_recv": en.RW_CHAN_RECV,
         "return": en.RW_RETURN,
     }
     # Símbolos
