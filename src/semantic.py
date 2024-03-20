@@ -85,8 +85,12 @@ class SemanticAnalyzer:
     def visit_RW_C_CHANNEL(self, node):
         self.current_type = en.RW_C_CHANNEL
         self.visit_children(node)
+
         return SyntaxNode(en.RW_C_CHANNEL, None)
     
+
+        return node
+
     # Função visit_RW_PRINT: visita um nó de impressão
     def visit_RW_PRINT(self, node):
 
@@ -97,7 +101,7 @@ class SemanticAnalyzer:
     # Função visit_RW_INPUT: visita um nó de entrada
     def visit_RW_INPUT(self, node):
         value = self.visit(node.children[0])
-    
+
     # Função visit_OP_ASSIGN: visita um nó de atribuição
     def visit_OP_ASSIGN(self, node):
         name = node.children[0].value

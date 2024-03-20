@@ -180,6 +180,5 @@ class SyntaxNode:
             host = self.children[0].evaluate(indent_level)
             type = self.children[1].evaluate(indent_level)
             return f"{indent}c_channel({host}, {type})\n"
-
         else:
             raise ValueError(f"Invalid node_type enum {self.node_type}")

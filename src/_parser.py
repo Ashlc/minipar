@@ -100,6 +100,10 @@ class Parser:
             return self.parse_seq()
         elif token_type == en.RW_PAR:
             return self.parse_par()
+        elif token_type == en.RW_CHAN_SEND:
+            return self.parse_chan_send()
+        elif token_type == en.RW_CHAN_RECV:
+            return self.parse_chan_recv()
         else:
             return self.parse_expression()
 
@@ -120,6 +124,31 @@ class Parser:
             if_node.add_children(else_block)
         return if_node
 
+      
+    def parse_chan_send(self):
+        # chan_send(chan, v1, v2);
+        self.eat(en.RW_CHAN_SEND)
+        params = self.parse_params()
+        if len(params) != 3:
+            raise SyntaxError("Invalid number of parameters for chan_send")
+        send_node = SyntaxNode(en.RW_CHAN_SEND, params[0])
+        send_node.add_children(params[1])
+        send_node.add_children(params[2])
+        self.eat(en.DL_SEMICOLON)
+        return send_node
+
+    def parse_chan_recv(self):
+        # chan_recv(chan, v1, v2, res);
+        self.eat(en.RW_CHAN_RECV)
+        params = self.parse_params()
+        if len(params) != 4:
+            raise SyntaxError("Invalid number of parameters for chan_recv")
+        recv_node = SyntaxNode(en.RW_CHAN_RECV, params[0])
+        recv_node.add_children(params[1])
+        recv_node.add_children(params[2])
+        recv_node.add_children(params[3])
+        self.eat(en.DL_SEMICOLON)
+       
     # Analisa uma instrução WHILE
     def parse_while_statement(self):
         self.eat(en.RW_WHILE)
