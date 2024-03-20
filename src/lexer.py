@@ -1,7 +1,5 @@
-import traceback
 from dictionary import WordDict
 from enum_tokens import TokenEnums
-from tk import *
 
 
 class Lexer:
