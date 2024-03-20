@@ -324,3 +324,4 @@ class Parser:
             raise SyntaxError(
                 f"Unexpected token: expected {token_type}, got {self.current_token[0]}"
             )
+    

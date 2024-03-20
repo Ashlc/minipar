@@ -1,6 +1,7 @@
 from enum_tokens import TokenEnums as en
 import json
-
+import threading
+import socket
 
 class SyntaxNode:
     def __init__(self, node_type, value=None):
@@ -58,10 +59,11 @@ class SyntaxNode:
                 output += child.evaluate(indent_level) + "\n"
             return output
 
+        # Adicionei um {indent} aqui pq no while quando ele ia mudar o valor do i ele não tinha indentação
         elif self.node_type == en.OP_ASSIGN:
             variable = self.children[0].value
             expression = self.children[1]
-            return f"{variable} = {expression.evaluate()}"
+            return f"{indent}{variable} = {expression.evaluate()}"
 
         elif self.node_type == en.OP_PLUS:
 
@@ -78,24 +80,42 @@ class SyntaxNode:
         elif self.node_type == en.STRING_LITERAL:
             return f'"{self.value}"'
 
+        # Eu acho que o problema no for é que a sintaxe que tu ta criando não existe em python
+        # Então eu acho que a alternativa mais viável seria fazer um loop while mas usando as 
+        # informações dadas. Seria tipo:
+        #   init = self.children[0].evaluate(indent_level + 1)
+        #   condition = self.value.evaluate()
+        #   increment = self.children[1].evaluate(indent_level + 1)
+        #   block = self.children[2].evaluate(indent_level + 1)
+        #   return f"{indent}init\nwhile {condition}:\n{increment}\n{block}"
+
+        # Eu fiz e funciona se ele estiver sozinho, mas não se vc fizer nested.
         elif self.node_type == en.RW_FOR:
-            init = self.children[0].evaluate(indent_level + 1)
+            init = self.children[0].evaluate()
             condition = self.value.evaluate()
             increment = self.children[1].evaluate(indent_level + 1)
-            block = self.children[2].evaluate(indent_level + 1)
-            return f"{indent}for {init}; {condition}; {increment}:\n{block}"
+            block = self.children[2].evaluate()
+            return f"{indent}{init}\nwhile {condition}:\n{increment}\n{block}"
+            #return f"{indent}for {init}; {condition}; {increment}:\n{block}"
 
+
+        # Antes o IF era obrigado a ter um else, eu mudei pra funcionar mesmo sem.
         elif self.node_type == en.RW_IF:
             condition = self.value.evaluate()
             block_true = self.children[0].evaluate(indent_level + 1)
-            block_false = self.children[1].evaluate(indent_level + 1)
-            return f"{indent}if {condition}:\n{block_true}{indent}else:\n{block_false}"
+            if len(self.children) > 1:
+                block_false = self.children[1].evaluate(indent_level + 1)
+                return f"{indent}if {condition}:\n{block_true}{indent}else:\n{block_false}"
+            else:
+                return f"{indent}if {condition}:\n{block_true}"
+            
 
+        # Eu tirei o {indent} daqui pq no while a primeira linha tinha o dobro de identação.
         elif self.node_type == en.BLOCK:
             block_code = ""
             for child in self.children:
                 block_code += child.evaluate(indent_level + 1) + "\n"
-            return f"{indent}{block_code}"
+            return f"{block_code}"
 
         elif self.node_type == en.RW_PRINT:
             expression = self.children[0].evaluate()
@@ -124,5 +144,40 @@ class SyntaxNode:
             elif self.node_type == en.OP_NE:
                 return f"{left} != {right}"
 
+        # While feito e funcionando, mesmo quando usado nested.
+        elif self.node_type == en.RW_WHILE:
+            condition = self.value.evaluate()
+            block = self.children[0].evaluate(indent_level + 1)
+            return f"{indent}while {condition}:\n{block}"
+        
+        elif self.node_type == en.RW_PAR:
+            # Eu não faço a menor ideia de como a gente separaria uma thread da outra, 
+            # então não sei como implementar, mas a ideia seria algo como feito a seguir
+            blocks = []
+            # Pega os N blocos
+            block = self.children[0].evaluate()
+            blocks.append(block)
+            print(block)
+            # Ele ta com um mini mini problema com o print, não sei pq mas o print pega un indetantion extra quando roda dentro do par.
+            return f"par_block({blocks})"
+        
+        elif self.node_type == en.RW_SEQ:
+            block = self.children[0].evaluate(indent_level + 1)
+            return f"{indent}{block}"
+        
+        # Eu não sei como ficou a sintaxe do channel, mas ACHO que é assim
+        # Além disso, OP_INCREMENT e OP_DECREMENT não existem na gramática, mas nós temos OP_INC e OP_DEC, não ajeitei isso mas é resolver no parser.
+        # Also c_channel ta com problema no parser, não sei o pq. Talvez seja eu escrevendo na sintaxe errada mesmo.
+        
+        elif self.node_type == en.C_CHANNEL:
+            operation = self.children[0].evaluate(indent_level)
+            comp1 = self.children[1].evaluate(indent_level)
+            comp2 = self.children[2].evaluate(indent_level)
+            return f"{indent}c_channel({operation}, {comp1}, {comp2})\n"
+
+        # Eu não sei se era pra ter uma função calculadora_send e calculadora_receive,
+        # Então n sei como prossegue a partir. 
+        # Mas se tiver é só fazer como ai em cima e estruturar a chamada da função.
+        # As funçoes em si eu já fiz.
         else:
             raise ValueError(f"Invalid node_type enum {self.node_type}")

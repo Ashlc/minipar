@@ -1,0 +1,26 @@
+{
+    "node_type": "PROGRAM",
+    "value": "--",
+    "children": [
+        {
+            "node_type": "RW_C_CHANNEL",
+            "value": {
+                "node_type": "ID",
+                "value": "operation",
+                "children": []
+            },
+            "children": [
+                {
+                    "node_type": "ID",
+                    "value": "client_1",
+                    "children": []
+                },
+                {
+                    "node_type": "ID",
+                    "value": "client_2",
+                    "children": []
+                }
+            ]
+        }
+    ]
+}
