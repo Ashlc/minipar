@@ -1,12 +1,14 @@
-from semantic import SemanticAnalyzer
-from _parser import Parser
-from enum_tokens import TokenEnums as en
-import json
-import threading
-import socket
+from semantic import SemanticAnalyzer  # Importa o módulo SemanticAnalyzer
+from _parser import Parser  # Importa o módulo Parser
+from enum_tokens import TokenEnums as en  # Importa TokenEnums do módulo enum_tokens
+import json  # Importa o módulo JSON para manipulação de dados JSON
+import threading  # Importa o módulo threading para concorrência
+import socket  # Importa o módulo socket para comunicação em rede
 
 def _calculate(num1, operator, num2):
-
+    """
+    Função para realizar cálculos aritméticos básicos.
+    """
     result = 0
     if operator == '+':
         result =  float(num1) + float(num2)
@@ -23,24 +25,24 @@ def _calculate(num1, operator, num2):
         return "Error: Invalid operator!"
     return result
 
-# from server import Server
-# from client import Client
-
 def c_channel(host, type):
-    this_addr = (host, 5546)
-    size = 1024
-    format = "utf-8"
-    procedure = None
+    """
+    Função para criar canais de soquete cliente ou servidor com base no tipo fornecido.
+    """
+    this_addr = (host, 5546) # Número da porta para comunicação
+    size = 1024 # Tamanho do buffer para receber dados
+    format = "utf-8" # Formato de codificação para dados de string
+    procedure = None # Espaço reservado para o procedimento a ser executado
 
     if type == "server":
-
+        # Criando um soquete do servidor
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind(this_addr)
-        server.listen()
+        server.bind(this_addr)  # Vinculando o servidor ao endereço
+        server.listen()  # Aguardando conexões de entrada
         print("[SERVER] Waiting for connections...")
         first = True
         op = False
-        conn, addr = server.accept()
+        conn, addr = server.accept()  # Aceitando conexão do cliente
         try:
             while True:
                 print("Waiting for connections...")
@@ -49,7 +51,7 @@ def c_channel(host, type):
                     conn.send("What procedure do you wish to execute?".encode(format))
                     first = False
 
-                a = conn.recv(size).decode(format)
+                a = conn.recv(size).decode(format) # Recebendo dados do cliente
                 print(a)
                 print(f"[SERVER] Received command: {a} from {addr}")
                 if a == "exit":
@@ -66,24 +68,25 @@ def c_channel(host, type):
                     a = a.replace("Expression: ", "")
                     a = a.split()
                     print(a[0],a[1],a[2])
-                    result = _calculate(a[0],a[1],a[2])
+                    result = _calculate(a[0],a[1],a[2]) # Realizando cálculo
                     message = f"Result: {result}"
-                    conn.send(message.encode("ascii"))
+                    conn.send(message.encode("ascii")) # Enviando resultado de volta para o cliente
                     break
                 else:
-                    conn.send("Invalid command".encode("ascii"))
+                    conn.send("Invalid command".encode("ascii")) # Lidando com comandos inválidos
         finally:
-            server.close()
+            server.close() # Fechando soquete do servidor ao finalizar
 
     elif type == "client":
+        # Criando um soquete do cliente
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect(this_addr)
-        message = client.recv(size).decode(format)
+        client.connect(this_addr) # Conectando ao servidor
+        message = client.recv(size).decode(format) # Recebendo mensagem do servidor
         print(f"Message from server: {message}")
-        procedure = input("Enter the procedure you wish to execute: ")
-        client.send(procedure.encode(format))
+        procedure = input("Enter the procedure you wish to execute: ") # Enviando procedimento para o servidor
+        client.send(procedure.encode(format)) # Recebendo mensagem do servidor
         while True:
-            message = client.recv(size).decode(format)
+            message = client.recv(size).decode(format) # Enviando expressão para o servidor
             print(f"Message from server: {message}")
 
             if message == "Awaiting expression...":
@@ -96,36 +99,39 @@ def c_channel(host, type):
             elif message.startswith("Result"):
                 print(f"Result: {message}")
                 break
-        client.close()
-
-def calculate(expression):
-    try:
-        result = eval(expression)
-        return result
-    except Exception as e:
-        return f"Error: {str(e)}"
-
+        client.close() # Fechando soquete do cliente ao finalizar
 
 def par_block(block):
+    """
+    Função para executar um bloco de código concorrentemente usando threading.
+    """
     thread = threading.Thread(target=lambda: exec(block[0]))
     thread.start()
 
 
 def seq_block():
+    """
+    Função de espaço reservado para a execução sequencial de blocos de código.
+    """
     pass
 
 
 class Interpreter:
-
+    """
+    Classe que representa um interpretador para uma linguagem de programação.
+    """
     def __init__(self, program, export=False):
-        self.program = program
-        self.semantic = SemanticAnalyzer()
-        self.parser = Parser(program)
-        self.output = []
-        self.export = export
-        self.tree = None
+        self.program = program  # Código do programa a ser interpretado
+        self.semantic = SemanticAnalyzer()  # Instância do analisador semântico
+        self.parser = Parser(program)  # Instância do analisador
+        self.output = []  # Saída gerada durante a interpretação
+        self.export = export  # Sinalizador indicando se os resultados devem ser exportados
+        self.tree = None  # Árvore de sintaxe abstrata gerada durante o parsing
 
     def run(self):
+        """
+        Método para executar o programa interpretado.
+        """
         self.tree = self.parser.parse()
         self.tree.print_tree()
         if self.export:
@@ -137,5 +143,8 @@ class Interpreter:
         return self.output
 
     def save_tree(self):
+        """
+        Salva a árvore sintática abstrata em um arquivo JSON.
+        """
         with open("tree.json", "w") as file:
             file.write(json.dumps(self.tree.to_json(), indent=4))
