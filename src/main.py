@@ -4,13 +4,13 @@ import sys
 import os
 import argparse
 from interpreter import Interpreter
+import threading
+import socket
 
 input_file = """
-int a = 10; # Comment
-if (a > 5) {
-  print("Hello");
-} else {
-  print("World");
+
+par{
+    int i = 0;
 }
 """
 

@@ -3,7 +3,6 @@ from dictionary import WordDict
 from enum_tokens import TokenEnums
 from tk import *
 
-
 class Lexer:
     def __init__(self, text):
         self.text = text
