@@ -1,0 +1,8 @@
+int n = 5;
+int resultado = 1;
+while (n > 1){
+    resultado = n * resultado;
+    n = n - 1;
+}
+print(resultado);
+

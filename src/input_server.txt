@@ -1,0 +1,3 @@
+seq{
+	c_channel("localhost", "server", "comp2");
+}
