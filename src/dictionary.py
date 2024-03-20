@@ -2,7 +2,7 @@ from enum_tokens import TokenEnums as en
 
 
 class WordDict:
-
+    # Palavras
     words = {
         "seq": en.RW_SEQ,
         "par": en.RW_PAR,
@@ -24,7 +24,7 @@ class WordDict:
         "chan_recv": en.RW_CHAN_RECV,
         "return": en.RW_RETURN,
     }
-
+    # Símbolos
     symbols = {
         "=": en.OP_ASSIGN,
         "+": en.OP_PLUS,

@@ -1,23 +1,26 @@
-import traceback
 from dictionary import WordDict
 from enum_tokens import TokenEnums
-from tk import *
 
 
 class Lexer:
+
+    # Inicializa o objeto Lexer com o texto fornecido.
     def __init__(self, text):
         self.text = text
         self.pos = 0
         self.current_char = self.text[self.pos] if self.pos < len(self.text) else None
-
+   
+    # Avança para o próximo caractere no texto.
     def advance(self):
         self.pos += 1
         self.current_char = self.text[self.pos] if self.pos < len(self.text) else None
-
+    
+    # Pula os caracteres de espaço em branco.
     def skip_whitespace(self):
         while self.current_char is not None and self.current_char.isspace():
             self.advance()
-
+    
+    # Analisa um identificador ou palavra-chave.
     def parse_id_or_keyword(self):
         result = ""
         while self.current_char is not None and (
@@ -31,7 +34,8 @@ class Lexer:
             return WordDict.words[result.lower()], result
         else:
             return TokenEnums.ID, result
-
+    
+    # Obtém o próximo token do texto.
     def get_next_token(self):
         while self.current_char is not None:
             if self.current_char.isspace():
