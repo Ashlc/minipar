@@ -10,9 +10,7 @@ class Parser:
         self.current_token = self.lexer.get_next_token()
 
     def parse(self):
-        print("[PARSER] Begin...")
         syntax_tree = self.parse_program()
-        print("[PARSER] Complete.")
         return syntax_tree
 
     def parse_program(self):
@@ -20,15 +18,9 @@ class Parser:
         while self.current_token[0] != en.EOF:
             if self.current_token[0] == en.ID:
                 assignment_node = self.parse_assignment()
-                # print(
-                #     f"[parse_program] Adding assignment node to program: {assignment_node}"
-                # )
                 syntax_tree.add_children(assignment_node)
             elif self.current_token[0] in (en.RW_INT, en.RW_BOOL, en.RW_STRING):
                 declaration_node = self.parse_declaration()
-                # print(
-                #     f"[parse_program] Adding declaration node to program: {declaration_node}"
-                # )
                 syntax_tree.add_children(declaration_node)
             elif self.current_token[0] in (
                 en.RW_IF,
@@ -41,9 +33,7 @@ class Parser:
                 en.RW_PAR,
             ):
                 statement_node = self.parse_statement()
-                # print(
-                #     f"[parse_program] Adding statement node to program: {statement_node}"
-                # )
+
                 syntax_tree.add_children(statement_node)
             else:
                 raise SyntaxError(f"Unexpected token: {self.current_token[0]}")
@@ -65,8 +55,6 @@ class Parser:
 
         assignment_node = SyntaxNode(en.OP_ASSIGN)
 
-        # print(f"identifier: {identifier}")
-
         identifier_node = SyntaxNode(en.ID, identifier[1])
         assignment_node.add_children(identifier_node)
         assignment_node.add_children(value)
@@ -74,7 +62,6 @@ class Parser:
         declaration_node = SyntaxNode(token[0])
         declaration_node.add_children(assignment_node)
 
-        # print(f"[parse_declaration] Returning declaration node.")
         return declaration_node
 
     def parse_block(self):
@@ -138,22 +125,17 @@ class Parser:
         while_node = SyntaxNode(en.RW_WHILE, condition)
         while_node.add_children(block)
 
-        print("[parse_while_statement] Returning node with type: (WHILE)")
         return while_node
 
     def parse_for_statement(self):
         self.eat(en.RW_FOR)
-        print(f"[FOR] Current token: {self.current_token}")
         self.eat(en.DL_LPAREN)
-        print(f"[FOR] Current token: {self.current_token}")
         init = None
 
         if self.current_token[0] == en.RW_INT:
             init = self.parse_declaration()
         else:
             init = self.parse_assignment()
-
-        print(f"[FOR] Current token: {self.current_token}")
 
         condition = self.parse_expression()
 
@@ -168,23 +150,18 @@ class Parser:
         for_node.add_children(increment)
         for_node.add_children(block)
 
-        print(f"[FOR] Returning node: ")
         for_node.print_tree()
-        print(f"[FOR] With condition node:")
         condition.print_tree()
 
-        print("[parse_for_statement] Returning node with type: (FOR)")
         return for_node
 
     def parse_c_channel(self):
         token = self.current_token
         self.eat(en.RW_C_CHANNEL)
-        print(f"[parse_c_channel] Current token: {self.current_token}")
         params = self.parse_params()
         channel_node = SyntaxNode(en.RW_C_CHANNEL, params[0])
         channel_node.add_children(params[1])
         channel_node.add_children(params[2])
-        print("[parse_c_channel] Returning node with type: (C_CHANNEL)")
         channel_node.print_tree()
         self.eat(en.DL_SEMICOLON)
         return channel_node
@@ -203,7 +180,6 @@ class Parser:
     def parse_seq(self):
         self.eat(en.RW_SEQ)
         block = self.parse_block()
-        print("[parse_seq] Returning node with type: (SEQ)")
         seq_node = SyntaxNode(en.RW_SEQ)
         seq_node.add_children(block)
         return seq_node
@@ -211,7 +187,6 @@ class Parser:
     def parse_par(self):
         self.eat(en.RW_PAR)
         block = self.parse_block()
-        print("[parse_par] Returning node with type: (PAR)")
         par_node = SyntaxNode(en.RW_PAR)
         par_node.add_children(block)
         return par_node
@@ -238,12 +213,10 @@ class Parser:
                 self.eat(en.DL_SEMICOLON)
             except SyntaxError:
                 print("WARNING: Expected semicolon, but did not find one.")
-
             assignment_node = SyntaxNode(en.OP_ASSIGN)
             identifier_node = SyntaxNode(en.ID, identifier[1])
             assignment_node.add_children(identifier_node)
             assignment_node.add_children(value)
-            print(f"[parse_assignment] Returning node with type: ({en.OP_ASSIGN})")
             return assignment_node
 
         elif token[0] in (en.OP_PLUS, en.OP_MINUS):
@@ -254,7 +227,6 @@ class Parser:
             operation_node = SyntaxNode(operator)
             operation_node.add_children(SyntaxNode(en.ID, identifier[1]))
             operation_node.add_children(value)
-            print(f"[parse_assignment] Returning node with type: ({operator})")
             return operation_node
         elif token[0] in (en.OP_INCREMENT, en.OP_DECREMENT):
             operator = token[0]
@@ -262,7 +234,6 @@ class Parser:
             self.eat(en.DL_SEMICOLON)
             operation_node = SyntaxNode(operator)
             operation_node.add_children(SyntaxNode(en.ID, identifier[1]))
-            print(f"[parse_assignment] Returning node with type: ({operator})")
             return operation_node
 
         else:
@@ -290,9 +261,6 @@ class Parser:
             operator_node = SyntaxNode(token[0])
             operator_node.add_children(node)
             operator_node.add_children(self.parse_term())
-            print(
-                f"OPERATOR NODE [parse_expression] {operator_node, operator_node.value, operator_node.node_type}"
-            )
             node = operator_node
         return node
 
@@ -356,24 +324,3 @@ class Parser:
             raise SyntaxError(
                 f"Unexpected token: expected {token_type}, got {self.current_token[0]}"
             )
-
-
-# Test
-
-# parser = Parser(
-#     """
-#     seq {
-#         int i = 0;
-#         for (i = 0; i < 5; i = i + 1) {
-#             print(i);
-#         }
-#     }
-
-#     for (int i = 0; i < 5; i = i + 1) {
-#         print(i);
-#     }
-# """
-# )
-
-# syntax_tree = parser.parse()
-# syntax_tree.print_tree()

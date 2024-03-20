@@ -3,7 +3,7 @@ from enum_tokens import TokenEnums as en
 from syntax_tree import SyntaxNode
 
 
-class Semantics:
+class SemanticAnalyzer:
     def __init__(self):
         self.global_env = {}
         self.local_envs = [{}]
@@ -11,11 +11,9 @@ class Semantics:
         self.current_scope = None
 
     def enter_scope(self):
-        print(f"[SCOPE] Entering scope")
         self.local_envs.append({})
 
     def exit_scope(self):
-        print(f"[SCOPE] Exiting scope: {self.local_envs[-1]}")
         self.local_envs.pop()
 
     def update_global_variable(self, name, value, var_type):
@@ -31,7 +29,6 @@ class Semantics:
 
     def visit(self, node):
         method_name = f"visit_{node.node_type.name}"
-        print(f"Visiting {node.node_type.name}")
         if method_name.replace("visit_", "") in (
             "OP_GT",
             "OP_LT",
@@ -56,11 +53,8 @@ class Semantics:
             return self.visit(child)
 
     def visit_RW_INT(self, node):
-        print(f"[RW_INT]")
         self.current_type = en.RW_INT
-        node.print_tree()
         child = self.visit_children(node)
-        print(f"[RW_INT] Returning {child}")
         return child
 
     def visit_RW_BOOL(self, node):
@@ -93,7 +87,6 @@ class Semantics:
 
         value = value_node.value
         var_type = value_node.node_type
-        print(f"Assigning {name} to {value} of type {var_type}")
 
         if name in self.global_env:
             self.update_global_variable(name, value, var_type)
@@ -101,27 +94,20 @@ class Semantics:
             self.local_envs[-1][name] = {"type": var_type, "value": value}
 
         return_node = SyntaxNode(var_type, value)
-        print(f"[ASSIGN] Returning {var_type} {value}, {return_node}")
         return return_node
 
     def visit_ID(self, node):
         name = node.value
 
-        print(f"Looking for {name} in local envs")
-
         for env in reversed(self.local_envs):
             if name in env:
                 found_var = env[name]
-                print(f"Found value: {found_var}")
                 if isinstance(found_var["value"], int):
-                    print(f"Returning {en.RW_INT} {found_var['value']}")
                     return SyntaxNode(en.RW_INT, found_var["value"])
                 elif isinstance(found_var["value"], str):
                     return SyntaxNode(en.STRING_LITERAL, found_var["value"])
                 else:
                     return SyntaxNode(env[name]["type"], env[name]["value"])
-
-        print(f"Looking for {name} in global env")
 
         if name in self.global_env:
             return SyntaxNode(
@@ -181,16 +167,9 @@ class Semantics:
 
     def visit_RW_FOR(self, node):
         self.enter_scope()
-        print(f"[FOR] Node:")
-        node.print_tree()
         init = self.visit(node.children[0])
         condition_node = self.visit(node.value)
         increment = self.visit(node.children[1])
-        print(f"[FOR] Current scope: {self.local_envs[-1]}")
-
-        print(
-            f"Init: {init}, Condition: {condition_node}, Increment: {increment.value}"
-        )
 
         if init.node_type is not None and init.node_type == en.NUM:
             init = self.visit(init)
@@ -207,7 +186,7 @@ class Semantics:
                 increment.node_type,
             )
 
-        self.visit(node.children[2])  # Check block node for semantic errors
+        self.visit(node.children[2])
 
         self.exit_scope()
 
@@ -217,17 +196,16 @@ class Semantics:
 
         condition_value = self.visit(condition_node).value
 
-        if condition_value:  # If condition is true, analyze the block
-            self.enter_scope()  # Enter scope for the block analysis
-            self.visit(block_node)  # Analyze the block
-            self.exit_scope()  # Exit the block scope
+        if condition_value:
+            self.enter_scope()
+            self.visit(block_node)
+            self.exit_scope()
 
     def visit_comparison(self, node):
         left = self.visit(node.children[0])
         right = self.visit(node.children[1])
 
         if left.node_type == right.node_type:
-            print(f"Comparing {left.value} with {right.value} and returning bool")
             return en.RW_BOOL
 
         else:
@@ -235,7 +213,6 @@ class Semantics:
 
     def visit_RW_IF(self, node):
         condition_type = self.visit(node.value)
-        node.print_tree()
 
         if condition_type == en.RW_BOOL:
             self.enter_scope()
@@ -244,19 +221,3 @@ class Semantics:
 
         else:
             raise Exception("Type error: condition in 'if' statement must be boolean")
-
-
-parser = Parser(
-    """  
-    int client_1 = "10.0.0.55";
-    int client_2 = "10.0.0.56";
-    
-    c_channel(calculator, client_1, client_2);
-"""
-)
-
-tree = parser.parse()
-tree.print_tree()
-semantics = Semantics()
-semantics.visit(tree)
-print("No semantic errors found")
