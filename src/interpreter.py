@@ -4,6 +4,18 @@ from enum_tokens import TokenEnums as en
 import json
 
 
+def c_channel(operation, client_1, client_2):
+    pass
+
+
+def par_block():
+    pass
+
+
+def seq_block():
+    pass
+
+
 class Interpreter:
 
     def __init__(self, program, export=False):
