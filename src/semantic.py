@@ -68,7 +68,7 @@ class SemanticAnalyzer:
     def visit_RW_C_CHANNEL(self, node):
         self.current_type = en.RW_C_CHANNEL
         self.visit_children(node)
-        return SyntaxNode(en.RW_C_CHANNEL, None)
+        return node
 
     def visit_RW_PRINT(self, node):
         value = self.visit(node.children[0]).value
@@ -77,6 +77,14 @@ class SemanticAnalyzer:
 
     def visit_RW_INPUT(self, node):
         value = self.visit(node.children[0])
+
+    def visit_RW_CHAN_SEND(self, node):
+        self.visit_children(node)
+        return node
+
+    def visit_RW_CHAN_RECV(self, node):
+        self.visit_children(node)
+        return node
 
     def visit_OP_ASSIGN(self, node):
         name = node.children[0].value

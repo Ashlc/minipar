@@ -188,6 +188,19 @@ class SyntaxNode:
             type = self.children[1].evaluate(indent_level)
             return f"{indent}c_channel({host}, {type})\n"
 
+        elif self.node_type == en.RW_CHAN_SEND:
+            channel = self.value.evaluate(indent_level)
+            v1 = self.children[0].evaluate(indent_level)
+            v2 = self.children[1].evaluate(indent_level)
+            return f"{indent}chan_send({channel}, {v1}, {v2})\n"
+
+        elif self.node_type == en.RW_CHAN_RECV:
+            channel = self.value.evaluate(indent_level)
+            v1 = self.children[0].evaluate(indent_level)
+            v2 = self.children[1].evaluate(indent_level)
+            res = self.children[2].evaluate(indent_level)
+            return f"{indent}chan_recv({channel}, {v1}, {v2}, {res})\n"
+
         # Eu não sei se era pra ter uma função calculadora_send e calculadora_receive,
         # Então n sei como faza pra implementar elas
         # Mas se tiver é só fazer como ai em cima e estruturar a chamada da função.
