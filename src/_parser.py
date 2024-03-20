@@ -150,19 +150,20 @@ class Parser:
         for_node.add_children(increment)
         for_node.add_children(block)
 
-        for_node.print_tree()
-        condition.print_tree()
-
         return for_node
 
     def parse_c_channel(self):
         token = self.current_token
         self.eat(en.RW_C_CHANNEL)
         params = self.parse_params()
-        channel_node = SyntaxNode(en.RW_C_CHANNEL, params[0])
+
+        if len(params) != 3:
+            raise SyntaxError("Invalid number of parameters for c_channel")
+
+        channel_node = SyntaxNode(en.RW_C_CHANNEL)
+        channel_node.add_children(params[0])
         channel_node.add_children(params[1])
         channel_node.add_children(params[2])
-        channel_node.print_tree()
         self.eat(en.DL_SEMICOLON)
         return channel_node
 
@@ -191,14 +192,26 @@ class Parser:
         par_node.add_children(block)
         return par_node
 
+    def parse_input(self):
+        self.eat(en.RW_INPUT)
+        self.eat(en.DL_LPAREN)
+        self.eat(en.DL_RPAREN)
+        self.eat(en.DL_SEMICOLON)
+        input_node = SyntaxNode(en.RW_INPUT)
+        return input_node
+
     def parse_print(self):
         self.eat(en.RW_PRINT)
         self.eat(en.DL_LPAREN)
         expression = self.parse_expression()
-        self.eat(en.DL_RPAREN)
-        self.eat(en.DL_SEMICOLON)
         print_node = SyntaxNode(en.RW_PRINT)
         print_node.add_children(expression)
+        while self.current_token[0] == en.DL_COMMA:
+            self.eat(en.DL_COMMA)
+            expression = self.parse_expression()
+            print_node.add_children(expression)
+        self.eat(en.DL_RPAREN)
+        self.eat(en.DL_SEMICOLON)
         return print_node
 
     def parse_assignment(self):
@@ -208,11 +221,11 @@ class Parser:
         if token[0] == en.OP_ASSIGN:
             self.eat(en.OP_ASSIGN)
             value = self.parse_expression()
-
             try:
                 self.eat(en.DL_SEMICOLON)
             except SyntaxError:
                 print("WARNING: Expected semicolon, but did not find one.")
+
             assignment_node = SyntaxNode(en.OP_ASSIGN)
             identifier_node = SyntaxNode(en.ID, identifier[1])
             assignment_node.add_children(identifier_node)
@@ -324,4 +337,3 @@ class Parser:
             raise SyntaxError(
                 f"Unexpected token: expected {token_type}, got {self.current_token[0]}"
             )
-    

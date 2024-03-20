@@ -3,6 +3,7 @@ from dictionary import WordDict
 from enum_tokens import TokenEnums
 from tk import *
 
+
 class Lexer:
     def __init__(self, text):
         self.text = text
@@ -22,6 +23,7 @@ class Lexer:
         while self.current_char is not None and (
             self.current_char.isalnum() or self.current_char == "_"
         ):
+
             result += self.current_char
             self.advance()
 
@@ -48,6 +50,38 @@ class Lexer:
 
             char = self.current_char
 
+            if char == "=":
+                if self.text[self.pos + 1] == "=":
+                    self.advance()
+                    self.advance()
+                    return TokenEnums.OP_EQ, "=="
+                else:
+                    self.advance()
+                    return TokenEnums.OP_ASSIGN, char
+            if char == "<":
+                if self.text[self.pos + 1] == "=":
+                    self.advance()
+                    self.advance()
+                    return TokenEnums.OP_LE, "<="
+                else:
+                    self.advance()
+                    return TokenEnums.OP_LT, char
+            if char == ">":
+                if self.text[self.pos + 1] == "=":
+                    self.advance()
+                    self.advance()
+                    return TokenEnums.OP_GE, ">="
+                else:
+                    self.advance()
+                    return TokenEnums.OP_GT, char
+            if char == "!":
+                if self.text[self.pos + 1] == "=":
+                    self.advance()
+                    self.advance()
+                    return TokenEnums.OP_NE, "!="
+                else:
+                    self.advance()
+                    return TokenEnums.OP_NOT, char
             if char == '"':
                 string_value = ""
                 self.advance()

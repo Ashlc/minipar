@@ -32,10 +32,10 @@ class SemanticAnalyzer:
         if method_name.replace("visit_", "") in (
             "OP_GT",
             "OP_LT",
-            "OP_GTE",
-            "OP_LTE",
+            "OP_GE",
+            "OP_LE",
             "OP_EQ",
-            "OP_NEQ",
+            "OP_NE",
         ):
             method_name = "visit_comparison"
         method = getattr(self, method_name, self.no_visit_method)

@@ -9,9 +9,11 @@ import socket
 
 input_file = """
 
-par{
-    int i = 0;
-}
+string server = "localhost";
+string procedure = "calculadora";
+string type = "client";
+c_channel(procedure, server, type);
+
 """
 
 interpreter = Interpreter(input_file, export=True)

@@ -3,7 +3,7 @@
     "value": "--",
     "children": [
         {
-            "node_type": "RW_INT",
+            "node_type": "RW_STRING",
             "value": "--",
             "children": [
                 {
@@ -12,12 +12,12 @@
                     "children": [
                         {
                             "node_type": "ID",
-                            "value": "a",
+                            "value": "server",
                             "children": []
                         },
                         {
-                            "node_type": "NUM",
-                            "value": 10,
+                            "node_type": "STRING_LITERAL",
+                            "value": "localhost",
                             "children": []
                         }
                     ]
@@ -25,57 +25,67 @@
             ]
         },
         {
-            "node_type": "RW_IF",
-            "value": {
-                "node_type": "OP_GT",
-                "value": "--",
-                "children": [
-                    {
-                        "node_type": "ID",
-                        "value": "a",
-                        "children": []
-                    },
-                    {
-                        "node_type": "NUM",
-                        "value": 5,
-                        "children": []
-                    }
-                ]
-            },
+            "node_type": "RW_STRING",
+            "value": "--",
             "children": [
                 {
-                    "node_type": "BLOCK",
+                    "node_type": "OP_ASSIGN",
                     "value": "--",
                     "children": [
                         {
-                            "node_type": "RW_PRINT",
-                            "value": "--",
-                            "children": [
-                                {
-                                    "node_type": "STRING_LITERAL",
-                                    "value": "Hello",
-                                    "children": []
-                                }
-                            ]
+                            "node_type": "ID",
+                            "value": "procedure",
+                            "children": []
+                        },
+                        {
+                            "node_type": "STRING_LITERAL",
+                            "value": "calculadora",
+                            "children": []
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "node_type": "RW_STRING",
+            "value": "--",
+            "children": [
+                {
+                    "node_type": "OP_ASSIGN",
+                    "value": "--",
+                    "children": [
+                        {
+                            "node_type": "ID",
+                            "value": "type",
+                            "children": []
+                        },
+                        {
+                            "node_type": "STRING_LITERAL",
+                            "value": "client",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "node_type": "RW_C_CHANNEL",
+            "value": "--",
+            "children": [
+                {
+                    "node_type": "ID",
+                    "value": "procedure",
+                    "children": []
                 },
                 {
-                    "node_type": "BLOCK",
-                    "value": "--",
-                    "children": [
-                        {
-                            "node_type": "RW_PRINT",
-                            "value": "--",
-                            "children": [
-                                {
-                                    "node_type": "STRING_LITERAL",
-                                    "value": "World",
-                                    "children": []
-                                }
-                            ]
-                        }
-                    ]
+                    "node_type": "ID",
+                    "value": "server",
+                    "children": []
+                },
+                {
+                    "node_type": "ID",
+                    "value": "type",
+                    "children": []
                 }
             ]
         }
