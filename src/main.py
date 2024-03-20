@@ -7,11 +7,13 @@ from interpreter import Interpreter
 import threading
 import socket
 
-input_file = """
+type = input("Caminho do arquivo fonte: ")
+with open(type, 'r') as file:
+    # Read the contents of the file
+    contents = file.read()
 
-c_channel("localhost", "server")
-
-"""
+# Now 'contents' holds the entire contents of the file
+input_file = contents
 
 interpreter = Interpreter(input_file, export=True)
 output = interpreter.run()

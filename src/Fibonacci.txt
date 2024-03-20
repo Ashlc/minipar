@@ -1,0 +1,10 @@
+int n = 5;
+int a = 0;
+int b = 1;
+int temp = 0;
+for(int i = 1; i < n; i = i + 1){
+    temp = a;
+    a = b;
+    b = temp + b;
+}
+print(a);
